@@ -116,6 +116,29 @@ export function fieldSelect(name, label, value, options, opts = {}) {
   return { input: select, node: fieldWrap(name, label, select, opts) };
 }
 
+// Barra de progresso "consumido / meta".
+export function progressBar(label, value, target, unit, opts = {}) {
+  const has = target > 0;
+  const ratio = has ? value / target : 0;
+  const over = has && value > target * 1.05 && opts.warnOver;
+  const rightText = has
+    ? `${Math.round(value)} / ${Math.round(target)} ${unit}`
+    : `${Math.round(value)} ${unit}`;
+
+  return h('div', { class: 'progress' + (over ? ' progress--over' : '') }, [
+    h('div', { class: 'progress__row' }, [
+      h('span', { class: 'progress__label', text: label }),
+      h('span', { class: 'progress__val', text: rightText }),
+    ]),
+    h('div', { class: 'progress__track' }, [
+      h('span', {
+        class: 'progress__fill',
+        style: `width:${Math.max(0, Math.min(ratio, 1)) * 100}%`,
+      }),
+    ]),
+  ]);
+}
+
 // Botão que mostra estado "salvando…" e volta ao normal.
 export async function withBusy(btn, fn) {
   const original = btn.textContent;

@@ -248,6 +248,136 @@ h1 {
   margin-top: 6px;
 }
 
+/* ---------- Progress bars ---------- */
+.progress {
+  margin-top: 10px;
+}
+.progress__row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  margin-bottom: 4px;
+}
+.progress__label {
+  color: var(--text);
+  font-weight: 600;
+}
+.progress__val {
+  color: var(--grey);
+}
+.progress__track {
+  height: 10px;
+  border-radius: 6px;
+  background: var(--green-soft);
+  overflow: hidden;
+}
+.progress__fill {
+  display: block;
+  height: 100%;
+  background: var(--green);
+  border-radius: 6px;
+  transition: width 0.25s ease;
+}
+.progress--over .progress__fill {
+  background: var(--amber);
+}
+.progress--over .progress__val {
+  color: var(--amber);
+  font-weight: 700;
+}
+
+/* ---------- Comida ---------- */
+.food-day {
+  text-transform: capitalize;
+  color: var(--grey);
+  font-size: 0.85rem;
+  margin: 8px 0 4px;
+}
+.food-tot {
+  font-weight: 700;
+  color: var(--green-dark);
+}
+.food-item__name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.food-item__macros {
+  color: var(--grey);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.meal-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 4px 0 12px;
+}
+.meal-chip {
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 7px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--grey);
+  cursor: pointer;
+}
+.meal-chip.is-active {
+  background: var(--green);
+  border-color: var(--green);
+  color: var(--white);
+}
+
+.meal-group {
+  margin-bottom: 12px;
+}
+.meal-group__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-weight: 700;
+  color: var(--green-dark);
+  font-size: 0.9rem;
+  padding-bottom: 2px;
+  border-bottom: 2px solid var(--green-soft);
+}
+
+.food-add-saved {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  border: none;
+  background: none;
+  font: inherit;
+  font-weight: 600;
+  color: var(--green-dark);
+  cursor: pointer;
+  padding: 2px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.food-add-saved::before {
+  content: "＋ ";
+  color: var(--green);
+}
+
+.checkline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 12px;
+  font-size: 0.88rem;
+}
+.checkline input {
+  width: auto;
+}
+
 /* ---------- Banners / alerts ---------- */
 .banner {
   border-radius: 10px;
@@ -576,6 +706,84 @@ select:focus {
   background: var(--green);
   color: var(--white);
   border-color: var(--green);
+}
+
+/* ---------- Cronômetro de descanso ---------- */
+.timer {
+  text-align: center;
+}
+.timer__clock {
+  font-size: 3rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--green-dark);
+  letter-spacing: 1px;
+}
+.timer__clock--done {
+  color: var(--amber);
+  animation: timer-flash 0.5s ease 3;
+}
+@keyframes timer-flash {
+  50% {
+    opacity: 0.3;
+  }
+}
+.timer__presets {
+  display: flex;
+  gap: 6px;
+  margin: 10px 0;
+}
+.timer__preset {
+  flex: 1;
+  font: inherit;
+  font-weight: 700;
+  padding: 9px 0;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--white);
+  color: var(--green-dark);
+  cursor: pointer;
+}
+.timer__preset:active {
+  background: var(--green-soft);
+}
+.timer__row {
+  display: flex;
+  gap: 6px;
+}
+.timer__row .btn {
+  flex: 1;
+  padding: 11px 0;
+}
+.timer__toggle {
+  flex: 1.4 !important;
+}
+
+.timer-pill {
+  position: fixed;
+  left: 16px;
+  bottom: calc(var(--tabbar-h) + 16px);
+  z-index: 20;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 15px;
+  font: inherit;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  background: var(--green-dark);
+  color: var(--white);
+  box-shadow: 0 6px 18px rgba(0, 66, 37, 0.35);
+  cursor: pointer;
+}
+.timer-pill[hidden] {
+  display: none;
+}
+.timer-pill--done {
+  background: var(--amber);
+  animation: timer-flash 0.5s ease 4;
 }
 
 /* ---------- FAB ---------- */

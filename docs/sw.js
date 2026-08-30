@@ -1,6 +1,6 @@
 /* Service worker mínimo — só para instalação e cache do "shell" estático.
    Nunca intercepta chamadas ao Firebase/Firestore. */
-const CACHE = 'pyramid-v2';
+const CACHE = 'pyramid-v3';
 const SHELL = [
   './',
   './index.html',
@@ -15,6 +15,7 @@ const SHELL = [
   './js/store.js',
   './js/ui.js',
   './js/guide-content.js',
+  './js/rest-timer.js',
   './js/views/login.js',
   './js/views/dashboard.js',
   './js/views/weigh-in.js',
@@ -24,6 +25,7 @@ const SHELL = [
   './js/views/supplements.js',
   './js/views/charts-view.js',
   './js/views/guide.js',
+  './js/views/food.js',
 ];
 
 self.addEventListener('install', (e) => {

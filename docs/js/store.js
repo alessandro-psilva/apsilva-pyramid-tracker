@@ -80,6 +80,54 @@ export async function listWeighIns() {
 }
 
 // ---------------------------------------------------------------------------
+// Registro diário de comida — id do doc = "YYYY-MM-DD", itens num array
+// ---------------------------------------------------------------------------
+export async function getFoodLog(date) {
+  const snap = await getDoc(doc(db, 'users', uid(), 'foodLogs', date));
+  return snap.exists() ? { items: snap.data().items || [] } : { items: [] };
+}
+
+export async function saveFoodLog(date, items) {
+  const clean = items.map((it) => ({
+    name: String(it.name || '').trim(),
+    meal: it.meal || '',
+    kcal: Number(it.kcal) || 0,
+    protein: Number(it.protein) || 0,
+    carb: it.carb === '' || it.carb == null ? null : Number(it.carb),
+    fat: it.fat === '' || it.fat == null ? null : Number(it.fat),
+  }));
+  await setDoc(doc(db, 'users', uid(), 'foodLogs', date), {
+    items: clean,
+    updatedAt: serverTimestamp(),
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Alimentos salvos (reutilizáveis para montar refeições)
+// ---------------------------------------------------------------------------
+export async function listFoods() {
+  const snap = await getDocs(sub('foods'));
+  return snap.docs
+    .map((d) => ({ id: d.id, ...d.data() }))
+    .sort((a, b) => a.name.localeCompare(b.name, 'pt'));
+}
+
+export async function addFood(item) {
+  await addDoc(sub('foods'), {
+    name: String(item.name || '').trim(),
+    kcal: Number(item.kcal) || 0,
+    protein: Number(item.protein) || 0,
+    carb: item.carb === '' || item.carb == null ? null : Number(item.carb),
+    fat: item.fat === '' || item.fat == null ? null : Number(item.fat),
+    createdAt: serverTimestamp(),
+  });
+}
+
+export async function deleteFood(id) {
+  await deleteDoc(doc(db, 'users', uid(), 'foods', id));
+}
+
+// ---------------------------------------------------------------------------
 // Força
 // ---------------------------------------------------------------------------
 export async function addStrengthLog(entry) {
