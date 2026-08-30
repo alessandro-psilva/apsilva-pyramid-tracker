@@ -16,6 +16,14 @@ function stat(label, value, tone) {
   ]);
 }
 
+function guideLink(ctx, chapterId, text) {
+  return h('button', {
+    class: 'guide-link',
+    onclick: () => ctx.navigate(`/guia/${chapterId}`),
+    text: `${text} ›`,
+  });
+}
+
 function macroBar(t) {
   const total = t.protein.kcal + t.fat.kcal + t.carb.kcal || 1;
   const seg = (kcal, cls) =>
@@ -75,6 +83,7 @@ export async function render(ctx) {
       }),
       macroBar(targets),
       ...targets.warnings.map((w) => h('p', { class: 'alert', text: '⚠ ' + w })),
+      guideLink(ctx, 'nivel-1', 'Entenda estes números'),
     ),
   );
 
@@ -101,6 +110,7 @@ export async function render(ctx) {
         h('p', { class: 'alert', text: '⚠ Menos de 3 pesagens em uma das semanas — média pouco confiável.' }),
     );
   }
+  statusCard.append(guideLink(ctx, 'ajustes', 'Como ler o status e ajustar a dieta'));
   frag.append(card('Status da última semana', statusCard));
 
   // --- Água / fibra / frutas ---
@@ -136,13 +146,13 @@ export async function render(ctx) {
     ),
   );
 
-  // --- Atalhos p/ telas secundárias ---
+  // --- Atalhos p/ telas fora da barra ---
   frag.append(
     card(
       null,
       h('div', { class: 'segmented' }, [
         h('button', { class: 'segmented__btn', onclick: () => ctx.navigate('/medidas') }, '📏 Medidas'),
-        h('button', { class: 'segmented__btn', onclick: () => ctx.navigate('/forca') }, '🏋️ Força'),
+        h('button', { class: 'segmented__btn', onclick: () => ctx.navigate('/suplementos') }, '💊 Suplementos'),
       ]),
     ),
   );

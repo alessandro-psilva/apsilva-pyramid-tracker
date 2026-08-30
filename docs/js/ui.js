@@ -50,6 +50,46 @@ export function card(title, ...content) {
   ]);
 }
 
+// Monta o container do campo: rótulo (+ botão "?") · input · dica · ajuda expansível.
+function fieldWrap(name, label, input, opts = {}) {
+  const children = [];
+
+  if (opts.help) {
+    const helpBox = h('div', { class: 'field__help', id: `help-${name}`, hidden: true }, [
+      h('p', { text: opts.help }),
+    ]);
+    const toggle = h('button', {
+      type: 'button',
+      class: 'field__help-btn',
+      'aria-label': `O que é "${label}"?`,
+      'aria-expanded': 'false',
+      text: '?',
+      onclick: () => {
+        const open = helpBox.hidden;
+        helpBox.hidden = !open;
+        toggle.setAttribute('aria-expanded', String(open));
+      },
+    });
+    children.push(
+      h('span', { class: 'field__labelrow' }, [
+        h('label', { class: 'field__label', for: `f-${name}`, text: label }),
+        toggle,
+      ]),
+      input,
+      opts.hint && h('span', { class: 'field__hint', text: opts.hint }),
+      helpBox,
+    );
+  } else {
+    children.push(
+      h('label', { class: 'field__label', for: `f-${name}`, text: label }),
+      input,
+      opts.hint && h('span', { class: 'field__hint', text: opts.hint }),
+    );
+  }
+
+  return h('div', { class: 'field' }, children);
+}
+
 export function fieldNumber(name, label, value, opts = {}) {
   const input = h('input', {
     id: `f-${name}`,
@@ -62,17 +102,10 @@ export function fieldNumber(name, label, value, opts = {}) {
     placeholder: opts.placeholder || '',
     required: opts.required || false,
   });
-  return {
-    input,
-    node: h('label', { class: 'field' }, [
-      h('span', { class: 'field__label', text: label }),
-      input,
-      opts.hint && h('span', { class: 'field__hint', text: opts.hint }),
-    ]),
-  };
+  return { input, node: fieldWrap(name, label, input, opts) };
 }
 
-export function fieldSelect(name, label, value, options) {
+export function fieldSelect(name, label, value, options, opts = {}) {
   const select = h(
     'select',
     { id: `f-${name}`, name },
@@ -80,13 +113,7 @@ export function fieldSelect(name, label, value, options) {
       h('option', { value: o, selected: o === value ? true : null }, o),
     ),
   );
-  return {
-    input: select,
-    node: h('label', { class: 'field' }, [
-      h('span', { class: 'field__label', text: label }),
-      select,
-    ]),
-  };
+  return { input: select, node: fieldWrap(name, label, select, opts) };
 }
 
 // Botão que mostra estado "salvando…" e volta ao normal.

@@ -2,6 +2,14 @@
 import { computeSupplements, fmt } from '../calc.js';
 import { h, card } from '../ui.js';
 
+function guideLink(ctx, text) {
+  return h('button', {
+    class: 'guide-link',
+    onclick: () => ctx.navigate('/guia/nivel-5'),
+    text: `${text} ›`,
+  });
+}
+
 export async function render(ctx) {
   const p = ctx.profile;
   const items = computeSupplements(p.weightKg);
@@ -36,6 +44,11 @@ export async function render(ctx) {
         class: 'alert',
         text: '⚠ Vitamina D3 só deve ser suplementada se um exame de sangue confirmar deficiência.',
       }),
+      h('p', {
+        class: 'muted',
+        text: 'Suplemento é o nível MENOS importante da pirâmide. Nada aqui é obrigatório — prefira marcas com selo de teste independente e evite "blends proprietários".',
+      }),
+      guideLink(ctx, 'O que é cada um e por que entra na lista'),
     ),
   );
   return frag;
