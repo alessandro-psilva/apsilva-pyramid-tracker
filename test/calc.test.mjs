@@ -11,6 +11,7 @@ import {
   weeklyStatus,
   mondayOf,
   sumFood,
+  splitPerMeal,
 } from '../docs/js/calc.js';
 
 const base = {
@@ -51,6 +52,16 @@ test('metas calóricas e macros', () => {
 test('suplementos escalam com o peso (creatina 0.04 g/kg)', () => {
   const s = computeSupplements(80);
   assert.match(s[0].dose, /3\.2 g/);
+});
+
+test('splitPerMeal divide a meta e limita o nº de refeições a 2–8', () => {
+  const targets = { targetKcal: 2400, protein: { g: 180 }, carb: { g: 240 }, fat: { g: 80 } };
+  const pm = splitPerMeal(targets, 4);
+  assert.equal(pm.meals, 4);
+  assert.equal(pm.kcal, 600);
+  assert.equal(pm.protein, 45);
+  assert.equal(splitPerMeal(targets, 100).meals, 8);
+  assert.equal(splitPerMeal(targets, 0).meals, 4); // fallback
 });
 
 test('cafeína: 1–3 mg/kg diária, 4–6 mg/kg pré-treino, com aviso', () => {

@@ -38,7 +38,7 @@ export async function render(ctx) {
       weightBox.append(c);
       requestAnimationFrame(() => weightChart(c, weighIns, weeks));
     } else {
-      weightBox.append(emptyState('Sem pesagens suficientes nesse período.', '📈'));
+      weightBox.append(emptyState('Sem pesagens suficientes nesse período.'));
     }
 
     waistBox.innerHTML = '';
@@ -47,7 +47,7 @@ export async function render(ctx) {
       waistBox.append(c);
       requestAnimationFrame(() => waistChart(c, measurements));
     } else {
-      waistBox.append(emptyState('Sem medidas de cintura nesse período.', '📏'));
+      waistBox.append(emptyState('Sem medidas de cintura nesse período.'));
     }
 
     macroBox.innerHTML = '';
@@ -56,7 +56,7 @@ export async function render(ctx) {
       macroBox.append(c);
       requestAnimationFrame(() => macroChart(c, ctx.targets));
     } else {
-      macroBox.append(emptyState('Preencha o perfil para ver os macros.', '🍽️'));
+      macroBox.append(emptyState('Preencha o perfil para ver os macros.'));
     }
   }
 

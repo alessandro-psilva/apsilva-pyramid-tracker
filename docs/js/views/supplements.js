@@ -42,7 +42,7 @@ export async function render(ctx) {
       null,
       h('p', {
         class: 'alert',
-        text: '⚠ Vitamina D3 só deve ser suplementada se um exame de sangue confirmar deficiência.',
+        text: 'Atenção — Vitamina D3 só deve ser suplementada se um exame de sangue confirmar deficiência.',
       }),
       h('p', {
         class: 'muted',

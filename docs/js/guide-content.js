@@ -16,7 +16,6 @@ export const CHAPTERS = [
   // -----------------------------------------------------------------------
   {
     id: 'mentalidade',
-    icon: '🧠',
     title: 'Mentalidade e materiais',
     tagline: 'Como pensar sobre dieta antes de contar qualquer caloria.',
     sections: [
@@ -64,7 +63,6 @@ export const CHAPTERS = [
   // -----------------------------------------------------------------------
   {
     id: 'nivel-1',
-    icon: '🔥',
     title: 'Nível 1 — Balanço energético',
     tagline: 'Calorias de manutenção, ganhar ou cortar, e a que ritmo.',
     sections: [
@@ -117,7 +115,6 @@ export const CHAPTERS = [
   // -----------------------------------------------------------------------
   {
     id: 'nivel-2',
-    icon: '🍽️',
     title: 'Nível 2 — Macronutrientes e fibra',
     tagline: 'De onde vêm as calorias: proteína, depois gordura, depois carbo.',
     sections: [
@@ -165,13 +162,12 @@ export const CHAPTERS = [
         ],
       },
     ],
-    appTie: 'No Perfil você define proteína (g/lb) e gordura (%); o app deriva os gramas e avisa se algum macro fura o piso mínimo. Na aba Comida você monta as refeições (com alimentos salvos) e vê o quanto falta de cada macro.',
+    appTie: 'No Perfil você define proteína (g/lb), gordura (%) e refeições por dia; o app deriva os gramas e avisa se algum macro fura o piso mínimo. Na aba Comida você monta as refeições com alimentos salvos, vê o quanto falta de cada macro no dia e uma margem de P/C/G por refeição.',
   },
 
   // -----------------------------------------------------------------------
   {
     id: 'nivel-3',
-    icon: '🥦',
     title: 'Nível 3 — Micronutrientes e água',
     tagline: 'Vitaminas, minerais, frutas/vegetais e hidratação.',
     sections: [
@@ -210,7 +206,6 @@ export const CHAPTERS = [
   // -----------------------------------------------------------------------
   {
     id: 'nivel-4',
-    icon: '⏱️',
     title: 'Nível 4 — Tempo e frequência',
     tagline: 'Diet breaks, refeeds, número de refeições, nutrição peri-treino.',
     sections: [
@@ -253,7 +248,6 @@ export const CHAPTERS = [
   // -----------------------------------------------------------------------
   {
     id: 'nivel-5',
-    icon: '💊',
     title: 'Nível 5 — Suplementação',
     tagline: 'O nível menos importante. A maioria só esvazia a carteira.',
     sections: [
@@ -295,7 +289,6 @@ export const CHAPTERS = [
   // -----------------------------------------------------------------------
   {
     id: 'ajustes',
-    icon: '📷',
     title: 'Fazendo ajustes e medindo progresso',
     tagline: 'Balança, fotos, desempenho e fita métrica — e quando mexer na dieta.',
     sections: [
@@ -344,7 +337,6 @@ export const CHAPTERS = [
   // -----------------------------------------------------------------------
   {
     id: 'periodizacao',
-    icon: '🗓️',
     title: 'Recuperação e periodização de longo prazo',
     tagline: 'O que fazer quando uma fase termina, e como encadear os anos.',
     sections: [
@@ -381,7 +373,6 @@ export const CHAPTERS = [
   // -----------------------------------------------------------------------
   {
     id: 'comportamento',
-    icon: '🧭',
     title: 'Comportamento e estilo de vida',
     tagline: 'Como seguir o plano de verdade, pelo resto da vida.',
     sections: [
@@ -428,7 +419,6 @@ export const CHAPTERS = [
   // -----------------------------------------------------------------------
   {
     id: 'pico',
-    icon: '🏆',
     title: 'Pico para competição',
     tagline: 'Capítulo avançado — só se você for competir.',
     sections: [

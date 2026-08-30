@@ -1,6 +1,6 @@
 /* Service worker mínimo — só para instalação e cache do "shell" estático.
    Nunca intercepta chamadas ao Firebase/Firestore. */
-const CACHE = 'pyramid-v3';
+const CACHE = 'pyramid-v4';
 const SHELL = [
   './',
   './index.html',

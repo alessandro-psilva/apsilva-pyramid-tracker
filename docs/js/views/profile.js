@@ -26,6 +26,8 @@ const HELP = {
     'Gramas de proteína por libra de peso (1 lb = 0,45 kg; o app converte). Padrões: 0,8 no Ganho, 1,1 no Corte. Sacia rápido e come pouco? Baixe. Com fome ou perdendo força no corte? Suba até 1,2.',
   fatPercent:
     'Quanto das calorias do dia vem de gordura — número inteiro (25 = 25%). O resto vira carboidrato. Padrões: 25% no Ganho, 20% no Corte. Não passe abaixo de ~0,25 g por libra de peso; a prévia avisa.',
+  mealsPerDay:
+    'Em quantas refeições você divide o dia. Serve só para a aba Comida mostrar uma margem de P/C/G por refeição — o livro não exige refeições fixas. O normal é 3 a 6.',
 };
 
 export async function render(ctx) {
@@ -46,6 +48,9 @@ export async function render(ctx) {
   const fFat = fieldNumber('fatPercent', 'Gordura (% das calorias)', Math.round(p.fatPercent * 100), {
     step: '1', integer: true, help: HELP.fatPercent,
   });
+  const fMeals = fieldNumber('mealsPerDay', 'Refeições por dia', p.mealsPerDay ?? 4, {
+    integer: true, min: '2', help: HELP.mealsPerDay,
+  });
 
   // Dica dinâmica da faixa recomendada de proteína (atualiza ao trocar de fase).
   const protRange = h('span', { class: 'field__hint' });
@@ -62,6 +67,7 @@ export async function render(ctx) {
       phase: fPhase.input.value,
       proteinGPerLb: parseFloat(fProt.input.value),
       fatPercent: parseFloat(fFat.input.value) / 100,
+      mealsPerDay: parseInt(fMeals.input.value, 10) || 4,
     };
   }
 
@@ -91,7 +97,7 @@ export async function render(ctx) {
         row('Carboidrato', `${fmt.g(t.carb.g)} · ${fmt.kcal(t.carb.kcal)}`),
       );
       for (const w of t.warnings) {
-        preview.append(h('p', { class: 'alert', text: '⚠ ' + w }));
+        preview.append(h('p', { class: 'alert', text: 'Atenção — ' + w }));
       }
     } catch (e) {
       preview.innerHTML = '';
@@ -107,7 +113,7 @@ export async function render(ctx) {
     }
     updatePreview();
   });
-  for (const f of [fW, fH, fLevel, fAct, fProt, fFat]) {
+  for (const f of [fW, fH, fLevel, fAct, fProt, fFat, fMeals]) {
     f.input.addEventListener('input', updatePreview);
     f.input.addEventListener('change', updatePreview);
   }
@@ -126,13 +132,13 @@ export async function render(ctx) {
         await withBusy(ev.submitter || ev.target.querySelector('[type=submit]'), async () => {
           await saveProfile(draft);
           await ctx.reloadProfile();
-          toast('Perfil salvo ✔', 'ok');
+          toast('Perfil salvo', 'ok');
           ctx.navigate('/dashboard');
         });
       },
     },
     [
-      fW.node, fH.node, fLevel.node, fAct.node, fPhase.node, fProt.node, fFat.node,
+      fW.node, fH.node, fLevel.node, fAct.node, fPhase.node, fProt.node, fFat.node, fMeals.node,
       h('button', { class: 'btn btn--block', type: 'submit' }, 'Salvar perfil'),
     ],
   );

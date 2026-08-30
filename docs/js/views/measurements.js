@@ -41,7 +41,7 @@ export async function render() {
     const rows = await listMeasurements();
     tableBox.innerHTML = '';
     if (!rows.length) {
-      tableBox.append(emptyState('Nenhuma medida registrada ainda.', '📏'));
+      tableBox.append(emptyState('Nenhuma medida registrada ainda.'));
       return;
     }
     const table = h('table', { class: 'data-table' }, [
@@ -61,7 +61,7 @@ export async function render() {
             ),
             h('td', {}, h('button', {
               class: 'link-del',
-              text: '✕',
+              text: '×',
               title: 'Excluir',
               onclick: async () => {
                 if (!confirm('Excluir esta medição?')) return;
@@ -90,7 +90,7 @@ export async function render() {
         }
         await withBusy(ev.submitter || ev.target.querySelector('[type=submit]'), async () => {
           await addMeasurement({ date: dateInput.value, ...values });
-          toast('Medidas salvas ✔', 'ok');
+          toast('Medidas salvas', 'ok');
           for (const f of fields) f.input.value = '';
           refresh();
         });

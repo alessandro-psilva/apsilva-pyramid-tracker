@@ -52,7 +52,7 @@ export async function render(ctx) {
         }
         await withBusy(ev.target, async () => {
           await saveWeighIn(date, value);
-          toast('Peso de hoje salvo ✔', 'ok');
+          toast('Peso de hoje salvo', 'ok');
           renderRecent();
         });
       },

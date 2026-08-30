@@ -340,11 +340,26 @@ h1 {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
+  gap: 8px;
   font-weight: 700;
   color: var(--green-dark);
   font-size: 0.9rem;
   padding-bottom: 2px;
   border-bottom: 2px solid var(--green-soft);
+}
+.meal-group__head .muted,
+.meal-group__over {
+  font-weight: 600;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+.meal-group__over {
+  color: var(--amber);
+}
+
+.food-permeal {
+  border-top: 1px dashed var(--border);
+  padding-top: 8px;
 }
 
 .food-add-saved {
@@ -363,8 +378,9 @@ h1 {
   white-space: nowrap;
 }
 .food-add-saved::before {
-  content: "＋ ";
+  content: "+ ";
   color: var(--green);
+  font-weight: 800;
 }
 
 .checkline {
@@ -680,10 +696,7 @@ select:focus {
   text-align: center;
   color: var(--grey);
   padding: 26px 10px;
-}
-.empty__icon {
-  font-size: 2rem;
-  margin-bottom: 6px;
+  font-size: 0.9rem;
 }
 
 /* ---------- Segmented control ---------- */
@@ -785,6 +798,10 @@ select:focus {
   background: var(--amber);
   animation: timer-flash 0.5s ease 4;
 }
+.timer-pill__label {
+  font-weight: 600;
+  opacity: 0.85;
+}
 
 /* ---------- FAB ---------- */
 .fab {
@@ -792,12 +809,9 @@ select:focus {
   right: 16px;
   bottom: calc(var(--tabbar-h) + 16px);
   z-index: 20;
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
   border: none;
   border-radius: 999px;
-  padding: 13px 20px 13px 17px;
+  padding: 13px 20px;
   font: inherit;
   font-weight: 800;
   font-size: 0.95rem;
@@ -812,10 +826,6 @@ select:focus {
 }
 .fab[hidden] {
   display: none;
-}
-.fab__plus {
-  font-size: 1.2rem;
-  line-height: 1;
 }
 
 /* ---------- Tab bar ---------- */
@@ -834,21 +844,17 @@ select:focus {
 .tabbar__item {
   flex: 1;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
   text-decoration: none;
   color: var(--grey);
-  font-size: 0.68rem;
-}
-.tabbar__icon {
-  font-size: 1.15rem;
-  line-height: 1;
+  font-size: 0.8rem;
+  font-weight: 600;
 }
 .tabbar__item.is-active {
   color: var(--green);
-  font-weight: 700;
+  font-weight: 800;
+  box-shadow: inset 0 2px 0 var(--green);
 }
 
 /* ---------- Auth ---------- */
@@ -956,10 +962,6 @@ select:focus {
 .guide-index__item:hover {
   border-color: var(--green);
 }
-.guide-index__icon {
-  font-size: 1.5rem;
-  flex-shrink: 0;
-}
 .guide-index__text {
   flex: 1;
   min-width: 0;
@@ -1001,14 +1003,7 @@ select:focus {
 }
 
 .guide-head {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
   margin-bottom: 6px;
-}
-.guide-head__icon {
-  font-size: 2rem;
-  line-height: 1;
 }
 .guide-head__title {
   font-size: 1.2rem;

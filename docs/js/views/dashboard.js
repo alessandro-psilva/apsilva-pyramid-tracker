@@ -49,7 +49,7 @@ export async function render(ctx) {
 
   if (profile._isNew) {
     return card(
-      'Bem-vindo 🌴',
+      'Bem-vindo',
       h('p', { text: 'Antes de tudo, preencha seu perfil para calcular as metas.' }),
       h('button', { class: 'btn btn--block', onclick: () => ctx.navigate('/perfil') }, 'Preencher perfil'),
     );
@@ -85,7 +85,7 @@ export async function render(ctx) {
         } ${fmt.kcal(targets.deltaKcal)}`,
       }),
       macroBar(targets),
-      ...targets.warnings.map((w) => h('p', { class: 'alert', text: '⚠ ' + w })),
+      ...targets.warnings.map((w) => h('p', { class: 'alert', text: 'Atenção — ' + w })),
       guideLink(ctx, 'nivel-1', 'Entenda estes números'),
     ),
   );
@@ -131,7 +131,7 @@ export async function render(ctx) {
         text: `Faixa esperada p/ ${profile.phase.toLowerCase()}: ${fmt.pctSigned(status.rate.min)} a ${fmt.pctSigned(status.rate.max)} por semana.`,
       }),
       status.lowDays &&
-        h('p', { class: 'alert', text: '⚠ Menos de 3 pesagens em uma das semanas — média pouco confiável.' }),
+        h('p', { class: 'alert', text: 'Atenção — Menos de 3 pesagens em uma das semanas — média pouco confiável.' }),
     );
   }
   statusCard.append(guideLink(ctx, 'ajustes', 'Como ler o status e ajustar a dieta'));
@@ -175,9 +175,9 @@ export async function render(ctx) {
     card(
       null,
       h('div', { class: 'segmented' }, [
-        h('button', { class: 'segmented__btn', onclick: () => ctx.navigate('/graficos') }, '📈 Gráficos'),
-        h('button', { class: 'segmented__btn', onclick: () => ctx.navigate('/medidas') }, '📏 Medidas'),
-        h('button', { class: 'segmented__btn', onclick: () => ctx.navigate('/suplementos') }, '💊 Suplementos'),
+        h('button', { class: 'segmented__btn', onclick: () => ctx.navigate('/graficos') }, 'Gráficos'),
+        h('button', { class: 'segmented__btn', onclick: () => ctx.navigate('/medidas') }, 'Medidas'),
+        h('button', { class: 'segmented__btn', onclick: () => ctx.navigate('/suplementos') }, 'Suplementos'),
       ]),
     ),
   );
@@ -186,7 +186,7 @@ export async function render(ctx) {
   const chartCard = (title, canvasId, hasData, drawFn) => {
     const box = h('div', { class: 'chart-box' });
     if (!hasData) {
-      box.append(emptyState('Sem dados suficientes ainda.', '📈'));
+      box.append(emptyState('Sem dados suficientes ainda.'));
     } else {
       const canvas = h('canvas', { id: canvasId });
       box.append(canvas);

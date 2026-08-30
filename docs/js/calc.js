@@ -351,6 +351,19 @@ export function sumFood(items = []) {
   return t;
 }
 
+// Divide a meta do dia em uma margem por refeição (divisão simples e igual).
+// O livro não exige refeições fixas — isto é só uma referência para montar.
+export function splitPerMeal(targets, meals) {
+  const n = Math.min(8, Math.max(2, Math.round(Number(meals) || 4)));
+  return {
+    meals: n,
+    kcal: targets.targetKcal / n,
+    protein: targets.protein.g / n,
+    carb: targets.carb.g / n,
+    fat: targets.fat.g / n,
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Helpers de formatação
 // ---------------------------------------------------------------------------

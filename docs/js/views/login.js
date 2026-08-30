@@ -45,9 +45,8 @@ export async function render() {
     },
     [
       h('div', { class: 'auth-card__brand' }, [
-        h('span', { class: 'auth-card__badge', text: '🌴' }),
         h('h1', { text: 'Pyramid Tracker' }),
-        h('p', { class: 'muted', text: 'Dieta & treino — método Eric Helms' }),
+        h('p', { class: 'muted', text: 'Dieta e treino — método Eric Helms' }),
       ]),
       h('label', { class: 'field' }, [
         h('span', { class: 'field__label', text: 'Email' }),

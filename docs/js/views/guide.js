@@ -48,7 +48,6 @@ function renderIndex(ctx) {
             onclick: () => ctx.navigate(`/guia/${c.id}`),
           },
           [
-            h('span', { class: 'guide-index__icon', text: c.icon }),
             h('span', { class: 'guide-index__text' }, [
               h('span', { class: 'guide-index__title', text: c.title }),
               h('span', { class: 'guide-index__tag', text: c.tagline }),
@@ -92,11 +91,8 @@ function renderChapter(ctx, id) {
   );
 
   const head = h('div', { class: 'guide-head' }, [
-    h('span', { class: 'guide-head__icon', text: chapter.icon }),
-    h('div', {}, [
-      h('h1', { class: 'guide-head__title', text: chapter.title }),
-      h('p', { class: 'guide-head__tag', text: chapter.tagline }),
-    ]),
+    h('h1', { class: 'guide-head__title', text: chapter.title }),
+    h('p', { class: 'guide-head__tag', text: chapter.tagline }),
   ]);
 
   const body = h('article', { class: 'guide-body' });
@@ -117,7 +113,7 @@ function renderChapter(ctx, id) {
   if (chapter.appTie) {
     body.append(
       h('div', { class: 'guide-tie' }, [
-        h('strong', { text: '📱 No app: ' }),
+        h('strong', { text: 'No app: ' }),
         h('span', { text: chapter.appTie }),
       ]),
     );

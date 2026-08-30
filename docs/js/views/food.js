@@ -3,10 +3,11 @@ import {
   getFoodLog, saveFoodLog,
   listFoods, addFood, deleteFood,
 } from '../store.js';
-import { todayISO, parseISODate, sumFood } from '../calc.js';
+import { todayISO, parseISODate, sumFood, splitPerMeal } from '../calc.js';
 import { h, toast, card, emptyState, fieldNumber, progressBar } from '../ui.js';
 
 const MEALS = ['Café', 'Almoço', 'Lanche', 'Jantar', 'Ceia'];
+const r0 = (n) => Math.round(n);
 
 function prettyDate(iso) {
   return parseISODate(iso).toLocaleDateString('pt-BR', {
@@ -16,6 +17,7 @@ function prettyDate(iso) {
 
 export async function render(ctx) {
   const t = ctx.targets;
+  const perMeal = t ? splitPerMeal(t, ctx.profile.mealsPerDay) : null;
   let date = todayISO();
   let items = (await getFoodLog(date)).items;
   let foods = await listFoods();
@@ -84,7 +86,12 @@ export async function render(ctx) {
           ? `Faltam ${remK} kcal e ${Math.max(remP, 0)} g de proteína.`
           : `${-remK} kcal acima da meta.`,
       }),
+      h('p', {
+        class: 'muted food-permeal',
+        text: `Margem por refeição (÷${perMeal.meals}): ~${r0(perMeal.kcal)} kcal · P ${r0(perMeal.protein)} · C ${r0(perMeal.carb)} · G ${r0(perMeal.fat)} g.`,
+      }),
     );
+    updateMealHint();
   }
 
   function itemRow(it, i) {
@@ -95,7 +102,7 @@ export async function render(ctx) {
         (it.carb != null ? ` · C ${Math.round(it.carb)}` : '') +
         (it.fat != null ? ` · G ${Math.round(it.fat)}` : '') }),
       h('button', {
-        class: 'link-del', text: '✕', 'aria-label': `Remover ${it.name}`,
+        class: 'link-del', text: '×', 'aria-label': `Remover ${it.name}`,
         onclick: async () => {
           items.splice(i, 1);
           drawProgress(); drawList();
@@ -108,7 +115,7 @@ export async function render(ctx) {
   function drawList() {
     listBox.innerHTML = '';
     if (!items.length) {
-      listBox.append(emptyState('Nada neste dia ainda. Monte as refeições abaixo.', '🍽️'));
+      listBox.append(emptyState('Nada neste dia ainda. Monte as refeições abaixo.'));
       return;
     }
     const groups = [...MEALS, ''];
@@ -118,11 +125,15 @@ export async function render(ctx) {
         .filter(([it]) => (it.meal || '') === g);
       if (!rows.length) continue;
       const gs = sumFood(rows.map(([it]) => it));
+      const totText = perMeal
+        ? `${r0(gs.kcal)} / ${r0(perMeal.kcal)} kcal · P ${r0(gs.protein)}/${r0(perMeal.protein)}`
+        : `${r0(gs.kcal)} kcal · P ${r0(gs.protein)}`;
+      const over = perMeal && gs.kcal > perMeal.kcal * 1.15;
       listBox.append(
         h('div', { class: 'meal-group' }, [
           h('div', { class: 'meal-group__head' }, [
             h('span', { text: g || 'Sem categoria' }),
-            h('span', { class: 'muted', text: `${Math.round(gs.kcal)} kcal · P ${Math.round(gs.protein)}` }),
+            h('span', { class: over ? 'meal-group__over' : 'muted', text: totText }),
           ]),
           h('ul', { class: 'list' }, rows.map(([it, i]) => itemRow(it, i))),
         ]),
@@ -149,13 +160,13 @@ export async function render(ctx) {
                 carb: f.carb ?? null, fat: f.fat ?? null,
               });
               drawProgress(); drawList();
-              toast(`${f.name} → ${meal}`, 'ok');
+              toast(`${f.name} em ${meal}`, 'ok');
               await persist();
             },
           }),
           h('span', { class: 'food-item__macros', text: `${Math.round(f.kcal)} kcal · P ${Math.round(f.protein)}` }),
           h('button', {
-            class: 'link-del', text: '✕', 'aria-label': `Apagar ${f.name}`,
+            class: 'link-del', text: '×', 'aria-label': `Apagar ${f.name}`,
             onclick: async () => {
               if (!confirm(`Apagar "${f.name}" dos seus alimentos?`)) return;
               await deleteFood(f.id);
@@ -201,6 +212,21 @@ export async function render(ctx) {
     }
   });
 
+  const mealHint = h('span', { class: 'field__hint' });
+  function updateMealHint() {
+    if (!perMeal) {
+      mealHint.textContent = '';
+      return;
+    }
+    const logged = sumFood(items.filter((it) => (it.meal || '') === meal));
+    const fk = Math.round(perMeal.kcal - logged.kcal);
+    const fp = Math.round(perMeal.protein - logged.protein);
+    mealHint.textContent =
+      fk >= 0
+        ? `${meal}: cabem mais ~${fk} kcal e ${Math.max(fp, 0)} g de proteína.`
+        : `${meal}: já passou ${-fk} kcal da margem.`;
+  }
+
   const mealChips = h('div', { class: 'meal-chips' },
     MEALS.map((m) =>
       h('button', {
@@ -210,6 +236,7 @@ export async function render(ctx) {
           meal = m;
           for (const b of ev.target.parentElement.children) b.classList.remove('is-active');
           ev.target.classList.add('is-active');
+          updateMealHint();
         },
       }, m),
     ),
@@ -255,6 +282,7 @@ export async function render(ctx) {
     ]),
     h('span', { class: 'field__label', text: 'Refeição' }),
     mealChips,
+    mealHint,
     h('div', { class: 'grid-2' }, [fKcal.node, fProt.node, fCarb.node, fFat.node]),
     h('label', { class: 'checkline' }, [fSave, h('span', { text: 'Salvar como meu alimento' })]),
     h('button', { class: 'btn btn--block', type: 'submit' }, 'Adicionar'),
