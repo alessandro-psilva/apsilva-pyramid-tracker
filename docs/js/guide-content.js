@@ -272,7 +272,7 @@ export const CHAPTERS = [
           '**Ômega-3 (EPA+DHA):** 1–2 g/dia combinados (pode exigir 3–6 g de óleo de peixe). Não megadose. Benefícios de saúde (pressão, humor, cardio); efeito em hipertrofia é fraco/misto.',
           '**Vitamina D3:** 20–80 UI/kg/dia — **só** se um exame mostrar 25(OH)D abaixo de 75 nmol/L (30 ng/mL). Corrigida a deficiência, mais não é melhor.',
           '**Creatina monoidratada:** 0,04 g/kg/dia (~3–5 g), qualquer horário, todo dia. Timing e "saturação" só afetam as 2 primeiras semanas. Saturar ajuda se você começa durante o corte (menos ruído na balança).',
-          '**Cafeína:** 1–3 mg/kg/dia para suprimir cansaço (efeito resiste à tolerância); 4–6 mg/kg ~60 min pré-treino para desempenho. Mantenha o consumo habitual baixo (~1 mg/kg, ~2×/semana) para a dose pré-treino ainda funcionar. Reduza no fim do dia.',
+          '**Cafeína:** dois usos, que NÃO se somam. Para o cansaço: 1–3 mg/kg/dia distribuídos (resiste à tolerância). Para desempenho: 4–6 mg/kg em dose única ~60 min antes do treino — comece pela metade e mantenha o resto do dia perto de 1 mg/kg, no máx. ~2×/semana, senão a tolerância anula o efeito. Teto geral de segurança: ~400 mg/dia. Reduza no fim do dia.',
         ],
       },
       {

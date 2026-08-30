@@ -53,6 +53,16 @@ test('suplementos escalam com o peso (creatina 0.04 g/kg)', () => {
   assert.match(s[0].dose, /3\.2 g/);
 });
 
+test('cafeína: 1–3 mg/kg diária, 4–6 mg/kg pré-treino, com aviso', () => {
+  const s = computeSupplements(80);
+  const daily = s.find((x) => /cansaço/i.test(x.name));
+  const pre = s.find((x) => /pré-treino/i.test(x.name));
+  assert.equal(daily.dose, '80–240 mg/dia');
+  assert.equal(pre.dose, '320–480 mg');
+  assert.equal(pre.warn, true);
+  assert.match(pre.timing, /NÃO some/); // não é aditiva com a dose diária
+});
+
 test('weeklyRate inverte por fase', () => {
   const ganho = weeklyRate({ ...base, phase: 'Ganho' });
   assert.ok(ganho.min > 0 && ganho.max > ganho.min);

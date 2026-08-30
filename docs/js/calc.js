@@ -179,14 +179,16 @@ export function computeSupplements(weightKg) {
       timing: 'Qualquer horário, todos os dias (inclusive dias de descanso).',
     },
     {
-      name: 'Cafeína — dose diária',
+      name: 'Cafeína — para o cansaço',
       dose: `${round(weightKg * 1)}–${round(weightKg * 3)} mg/dia`,
-      timing: 'Distribuída ao longo do dia.',
+      timing: 'Distribuída ao longo do dia. Esse efeito resiste à tolerância.',
     },
     {
-      name: 'Cafeína — pré-treino',
+      name: 'Cafeína — pré-treino (desempenho)',
       dose: `${round(weightKg * 4)}–${round(weightKg * 6)} mg`,
-      timing: '~60 min antes do treino (conta no total diário).',
+      timing:
+        'Dose única ~60 min antes de treinar. NÃO some com a de cima — é a alternativa nos dias de treino. Comece pela metade; nos outros horários fique perto de 1 mg/kg, no máx. ~2×/semana (senão a tolerância mata o efeito). Não passe de ~400 mg no total do dia.',
+      warn: true,
     },
     {
       name: 'Ômega-3 (EPA + DHA)',
