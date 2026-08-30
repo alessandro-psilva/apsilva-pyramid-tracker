@@ -1,0 +1,14 @@
+# Firebase CLI
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+
+# Node (only if you add tooling later)
+node_modules/
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
