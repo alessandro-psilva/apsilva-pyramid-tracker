@@ -133,9 +133,9 @@ function refreshTimerPill(state = restTimer.getState()) {
   const pill = $('#timer-pill');
   if (!pill) return;
   const onForca = parseHash().base === '/forca';
-  pill.hidden = onForca || (!state.running && state.remaining === 0);
+  pill.hidden = onForca || (!state.running && !state.finished);
   $('#timer-pill-t').textContent = restTimer.fmtClock(state.remaining);
-  pill.classList.toggle('timer-pill--done', state.remaining === 0 && !state.running);
+  pill.classList.toggle('timer-pill--done', state.finished);
 }
 
 function setChrome(base, param) {
@@ -157,6 +157,7 @@ function setChrome(base, param) {
 }
 
 let routeSeq = 0;
+let currentView = null;
 async function route() {
   if (!auth.currentUser) return;
   const myTurn = ++routeSeq;
@@ -164,6 +165,12 @@ async function route() {
   const { base, param } = parseHash();
   ctx.routeParam = param;
   const { view } = ROUTES[base];
+
+  // Deixa a tela anterior soltar timers/inscrições antes de trocar.
+  if (currentView && currentView !== view && typeof currentView.teardown === 'function') {
+    try { currentView.teardown(); } catch (e) { console.error(e); }
+  }
+  currentView = view;
 
   setChrome(base, param);
   destroyAll();

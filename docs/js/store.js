@@ -109,7 +109,7 @@ export async function listFoods() {
   const snap = await getDocs(sub('foods'));
   return snap.docs
     .map((d) => ({ id: d.id, ...d.data() }))
-    .sort((a, b) => a.name.localeCompare(b.name, 'pt'));
+    .sort((a, b) => (a.name || '').localeCompare(b.name || '', 'pt'));
 }
 
 export async function addFood(item) {

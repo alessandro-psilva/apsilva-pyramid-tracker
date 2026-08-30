@@ -7,8 +7,16 @@ import * as timer from '../rest-timer.js';
 const PRESETS = [60, 90, 120, 180];
 let activeUnsub = null;
 
+// Chamado pelo roteador ao sair da tela: solta a inscrição do cronômetro.
+export function teardown() {
+  if (activeUnsub) {
+    activeUnsub();
+    activeUnsub = null;
+  }
+}
+
 function restTimerCard() {
-  if (activeUnsub) activeUnsub(); // solta a inscrição do render anterior
+  teardown(); // solta a inscrição do render anterior
   const clock = h('div', { class: 'timer__clock', text: '0:00' });
   const startBtn = h('button', { class: 'btn timer__toggle', onclick: () => timer.toggle() }, 'Iniciar');
   const box = h('div', { class: 'timer' }, [
@@ -28,9 +36,9 @@ function restTimerCard() {
     ]),
   ]);
 
-  activeUnsub = timer.subscribe(({ remaining, running }) => {
+  activeUnsub = timer.subscribe(({ remaining, running, finished }) => {
     clock.textContent = timer.fmtClock(remaining);
-    clock.classList.toggle('timer__clock--done', remaining === 0 && !running);
+    clock.classList.toggle('timer__clock--done', finished);
     startBtn.textContent = running ? 'Pausar' : 'Iniciar';
   });
   // O cronômetro vive no módulo rest-timer.js: segue contando mesmo se você

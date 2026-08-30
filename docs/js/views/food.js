@@ -21,7 +21,7 @@ export async function render(ctx) {
   let foods = await listFoods();
   let meal = MEALS[0];
   let saving = false;
-  let pending = false;
+  let queued = null; // snapshot {date, items} aguardando o save atual terminar
 
   const dateInput = h('input', { id: 'f-foodDate', type: 'date', value: date });
   const dayLabel = h('p', { class: 'food-day', text: prettyDate(date) });
@@ -36,16 +36,26 @@ export async function render(ctx) {
   }
 
   async function persist() {
-    if (saving) { pending = true; return; }
+    // Captura o alvo AGORA — se a data mudar durante o save, o pendente
+    // ainda grava o dia certo.
+    if (saving) {
+      queued = { date, items };
+      return;
+    }
     saving = true;
+    let job = { date, items };
     try {
-      await saveFoodLog(date, items);
+      while (job) {
+        await saveFoodLog(job.date, job.items);
+        job = queued;
+        queued = null;
+      }
     } catch (e) {
       console.error(e);
       toast('Não deu para salvar.', 'warn');
+      queued = null;
     } finally {
       saving = false;
-      if (pending) { pending = false; persist(); }
     }
   }
 
