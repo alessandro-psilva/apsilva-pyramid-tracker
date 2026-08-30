@@ -336,6 +336,20 @@ export function weeklyStatus(profile, weighIns) {
 }
 
 // ---------------------------------------------------------------------------
+// Registro diário de comida — soma dos itens do dia
+// ---------------------------------------------------------------------------
+export function sumFood(items = []) {
+  const t = { kcal: 0, protein: 0, carb: 0, fat: 0 };
+  for (const it of items) {
+    t.kcal += Number(it.kcal) || 0;
+    t.protein += Number(it.protein) || 0;
+    t.carb += Number(it.carb) || 0;
+    t.fat += Number(it.fat) || 0;
+  }
+  return t;
+}
+
+// ---------------------------------------------------------------------------
 // Helpers de formatação
 // ---------------------------------------------------------------------------
 export const fmt = {

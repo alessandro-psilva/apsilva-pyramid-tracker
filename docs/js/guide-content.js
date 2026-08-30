@@ -165,7 +165,7 @@ export const CHAPTERS = [
         ],
       },
     ],
-    appTie: 'No Perfil você define proteína (g/lb) e gordura (%); o app deriva os gramas, mostra a faixa recomendada da fase e avisa se algum macro fura o piso mínimo.',
+    appTie: 'No Perfil você define proteína (g/lb) e gordura (%); o app deriva os gramas e avisa se algum macro fura o piso mínimo. Na aba Comida você monta as refeições (com alimentos salvos) e vê o quanto falta de cada macro.',
   },
 
   // -----------------------------------------------------------------------
@@ -247,7 +247,7 @@ export const CHAPTERS = [
         ],
       },
     ],
-    appTie: 'Esta parte é mais manual. Use a tela de Força para acompanhar se o desempenho no treino se mantém — o melhor sinal de que timing e refeeds estão adequados.',
+    appTie: 'Esta parte é mais manual. A aba Força traz o cronômetro de descanso entre séries e o histórico — o desempenho no treino é o melhor sinal de que timing e refeeds estão certos.',
   },
 
   // -----------------------------------------------------------------------

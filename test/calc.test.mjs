@@ -10,6 +10,7 @@ import {
   weeklyAverages,
   weeklyStatus,
   mondayOf,
+  sumFood,
 } from '../docs/js/calc.js';
 
 const base = {
@@ -86,6 +87,17 @@ test('status Ganho: ganho lento => "Abaixo da meta"', () => {
   ]);
   assert.equal(s.hasData, true);
   assert.equal(s.label, 'Abaixo da meta');
+});
+
+test('sumFood soma itens e trata macro ausente como 0', () => {
+  const s = sumFood([
+    { kcal: 200, protein: 30, carb: 5, fat: 4 },
+    { kcal: 150, protein: 10 }, // sem carb/fat
+  ]);
+  assert.equal(s.kcal, 350);
+  assert.equal(s.protein, 40);
+  assert.equal(s.carb, 5);
+  assert.equal(s.fat, 4);
 });
 
 test('status Corte: perda muito rápida => "Perdendo rápido"', () => {

@@ -35,14 +35,18 @@ que é e como preencher; telas ligam direto para o capítulo relevante do Guia.
 
 | Rota | Tela |
 |---|---|
-| `#/dashboard` | Resumo: peso, fase, metas do dia, água/fibra, suplementos, status semanal, 3 gráficos |
+| `#/dashboard` | Resumo: peso, fase, metas do dia, comida de hoje, água/fibra, suplementos, status semanal, 3 gráficos |
+| `#/comida` | Montar as refeições do dia (chips Café/Almoço/…), barras "X de Y" por macro, alimentos salvos reutilizáveis, planejamento de dias futuros |
 | `#/guia` | Guia de consulta com um capítulo por nível da Pirâmide + ajustes, periodização e comportamento (resumo do livro em português) |
 | `#/peso` | Registrar peso de hoje (acesso rápido pelo botão flutuante) |
-| `#/forca` | Registro de força + histórico por exercício com indicação de progressão |
+| `#/forca` | Cronômetro de descanso entre séries + registro de força + histórico por exercício com progressão |
 | `#/medidas` | 9 pontos de medida corporal (com instruções de como medir) + histórico |
 | `#/graficos` | Versão ampliada dos gráficos, com seletor de 4/8/12 semanas |
 | `#/suplementos` | Doses da Lista A calculadas pelo peso (somente leitura) |
 | `#/perfil` | Editar peso, altura, nível, atividade, fase e macros; prévia das metas ao vivo; "?" em cada campo |
+
+Barra inferior: **Resumo · Comida · Força · Guia · Perfil**. Peso pelo botão
+flutuante; Gráficos/Medidas/Suplementos por atalhos no Resumo.
 
 ---
 
@@ -51,11 +55,14 @@ que é e como preencher; telas ligam direto para o capítulo relevante do Guia.
 ```
 users/{uid}/meta/profile                 (documento único de perfil)
 users/{uid}/dailyWeighIns/{YYYY-MM-DD}    (pesagem diária, id = data)
+users/{uid}/foodLogs/{YYYY-MM-DD}         (itens do dia num array; id = data)
+users/{uid}/foods/{autoId}               (alimentos salvos p/ reutilizar)
 users/{uid}/strengthLogs/{autoId}
 users/{uid}/measurements/{autoId}
 ```
 
-O conteúdo do Guia é estático (`docs/js/guide-content.js`) — não usa o Firestore.
+As regras já cobrem tudo (`match /users/{uid}/{document=**}`). O conteúdo do Guia
+é estático (`docs/js/guide-content.js`); o cronômetro de descanso é só local.
 
 > O perfil fica em `meta/profile` (e não em `users/{uid}`) para ser coberto pela
 > regra recursiva `match /users/{uid}/{document=**}`.
@@ -185,10 +192,11 @@ docs/
     calc.js             lógica de negócio (funções puras)
     store.js            CRUD no Firestore
     charts.js           wrappers do Chart.js
-    ui.js               helpers de DOM / toast / campos com ajuda "?"
+    ui.js               helpers de DOM / toast / campos "?" / barra de progresso
     guide-content.js    texto do Guia (resumo do livro, estático)
+    rest-timer.js       cronômetro de descanso (estado no módulo, sem rede)
     app.js              bootstrap, gate de auth, roteador por hash, app bar
-    views/              uma tela por arquivo (inclui guide.js)
+    views/              uma tela por arquivo (food.js, guide.js, …)
 firestore.rules
 firebase.json
 test/calc.test.mjs
@@ -203,3 +211,6 @@ test/calc.test.mjs
   `icon-512.png` e atualize `manifest.webmanifest` e `index.html`.
 - Paleta: verde `#006437`, verde escuro `#004225`, verde claro `#E8F5E9`,
   cinza `#6B6B6B`, âmbar `#B7791F` (nunca vermelho puro).
+- **Texto do app:** editado seguindo *On Writing Well* (Zinsser) — frases curtas,
+  voz ativa, sem qualificadores ("um pouco", "meio"), palavra curta no lugar da
+  longa. Ao mexer na cópia, mantenha esse tom.

@@ -10,19 +10,19 @@ import { h, toast, withBusy, card, emptyState, fieldNumber } from '../ui.js';
 
 // Como e onde medir cada ponto (instruções do livro, cap. "Fazendo ajustes").
 const HELP = {
-  chest: 'Fita na linha do mamilo (ou sob as axilas, se ficar melhor pro seu formato). Inspire fundo, contraia peito e dorsais.',
-  armR: 'Braço direito contraído, como se mostrasse o bíceps. Meça no ponto mais grosso.',
-  armL: 'Braço esquerdo contraído, como se mostrasse o bíceps. Meça no ponto mais grosso.',
+  chest: 'Fita na linha do mamilo (ou sob as axilas, se cair melhor no seu formato). Inspire fundo, contraia peito e dorsais.',
+  armR: 'Braço direito contraído, em pose de bíceps. Meça no ponto mais grosso.',
+  armL: 'Braço esquerdo contraído, em pose de bíceps. Meça no ponto mais grosso.',
   thighR: 'Em pé, coxa direita contraída. Meça no ponto mais grosso.',
   thighL: 'Em pé, coxa esquerda contraída. Meça no ponto mais grosso.',
-  waistAbove: 'Três dedos ACIMA do umbigo. Tensione a barriga como se fosse levar um soco — sem estufar nem sugar.',
-  waistNavel: 'Na linha do umbigo. Mesma tensão de barriga (nem estufar nem sugar).',
+  waistAbove: 'Três dedos ACIMA do umbigo. Tensione a barriga como se fosse levar um soco — não estufe nem sugue.',
+  waistNavel: 'Na linha do umbigo. Mesma tensão de barriga.',
   waistBelow: 'Três dedos ABAIXO do umbigo. Mesma tensão de barriga.',
-  hips: 'Na parte mais larga do quadril/glúteos, em pé, relaxado.',
+  hips: 'Na parte mais larga do quadril, em pé, relaxado.',
 };
 
 const GENERAL_HELP =
-  'Meça 1×/semana, no mesmo dia, junto da média de peso. Meça você mesmo (assim nunca falta), sempre do mesmo jeito, e anote ao 0,1 cm. O que importa é a tendência ao longo das semanas, não uma medida isolada. Queda de 2–2,5 cm em pelo menos 2 pontos da barriga ≈ ~1,8 kg de gordura a menos.';
+  'Meça uma vez por semana, no mesmo dia, junto da média de peso. Meça você mesmo, sempre do mesmo jeito, e anote ao 0,1 cm. Vale a tendência ao longo das semanas, não uma medida solta. Cair 2–2,5 cm em dois ou mais pontos da barriga equivale a ~1,8 kg de gordura a menos.';
 
 export async function render() {
   const dateInput = h('input', { id: 'f-mDate', type: 'date', value: todayISO(), required: true });

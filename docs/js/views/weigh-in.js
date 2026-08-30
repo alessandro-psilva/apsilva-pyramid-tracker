@@ -108,7 +108,7 @@ export async function render(ctx) {
       save,
       h('p', {
         class: 'muted',
-        text: 'Pese-se de manhã, após o banheiro, antes de comer/beber, sem roupa. O número de um dia não importa — o app usa a média da semana (mín. 3 dias) para comparar com a semana anterior.',
+        text: 'Pese-se de manhã, após o banheiro, antes de comer ou beber. O número de um dia não diz nada — o app compara a média da semana (mínimo 3 dias) com a da semana anterior.',
       }),
     ),
     card('Últimas pesagens', recentBox),

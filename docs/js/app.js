@@ -18,9 +18,12 @@ import * as measurements from './views/measurements.js';
 import * as supplements from './views/supplements.js';
 import * as chartsView from './views/charts-view.js';
 import * as guide from './views/guide.js';
+import * as food from './views/food.js';
+import * as restTimer from './rest-timer.js';
 
 const ROUTES = {
   '/dashboard': { view: dashboard, label: 'Resumo', icon: '🏠', title: 'Resumo' },
+  '/comida': { view: food, label: 'Comida', icon: '🍽️', title: 'Comida de hoje' },
   '/peso': { view: weighIn, label: 'Peso', icon: '⚖️', title: 'Peso de hoje' },
   '/forca': { view: strength, label: 'Força', icon: '🏋️', title: 'Força' },
   '/medidas': { view: measurements, label: 'Medidas', icon: '📏', title: 'Medidas corporais' },
@@ -30,7 +33,7 @@ const ROUTES = {
   '/perfil': { view: profileView, label: 'Perfil', icon: '⚙️', title: 'Perfil' },
 };
 
-const NAV = ['/dashboard', '/guia', '/forca', '/graficos', '/perfil'];
+const NAV = ['/dashboard', '/comida', '/forca', '/guia', '/perfil'];
 // Telas em que o botão flutuante de peso não faz sentido.
 const FAB_HIDDEN = new Set(['/peso', '/perfil']);
 
@@ -116,7 +119,23 @@ function renderShell() {
     [h('span', { class: 'fab__plus', text: '＋' }), h('span', { text: 'Peso' })],
   );
 
-  document.body.append(header, main, fab, nav);
+  const pill = h(
+    'button',
+    { class: 'timer-pill', id: 'timer-pill', hidden: true, onclick: () => ctx.navigate('/forca') },
+    [h('span', { text: '⏱' }), h('span', { class: 'timer-pill__t', id: 'timer-pill-t', text: '0:00' })],
+  );
+
+  document.body.append(header, main, fab, pill, nav);
+}
+
+// Pílula flutuante com o tempo de descanso, visível em qualquer tela menos Força.
+function refreshTimerPill(state = restTimer.getState()) {
+  const pill = $('#timer-pill');
+  if (!pill) return;
+  const onForca = parseHash().base === '/forca';
+  pill.hidden = onForca || (!state.running && !state.finished);
+  $('#timer-pill-t').textContent = restTimer.fmtClock(state.remaining);
+  pill.classList.toggle('timer-pill--done', state.finished);
 }
 
 function setChrome(base, param) {
@@ -134,9 +153,11 @@ function setChrome(base, param) {
   backEl.hidden = onTab;
 
   $('#fab').hidden = FAB_HIDDEN.has(base) || isSub;
+  refreshTimerPill();
 }
 
 let routeSeq = 0;
+let currentView = null;
 async function route() {
   if (!auth.currentUser) return;
   const myTurn = ++routeSeq;
@@ -144,6 +165,12 @@ async function route() {
   const { base, param } = parseHash();
   ctx.routeParam = param;
   const { view } = ROUTES[base];
+
+  // Deixa a tela anterior soltar timers/inscrições antes de trocar.
+  if (currentView && currentView !== view && typeof currentView.teardown === 'function') {
+    try { currentView.teardown(); } catch (e) { console.error(e); }
+  }
+  currentView = view;
 
   setChrome(base, param);
   destroyAll();
@@ -190,6 +217,7 @@ function startApp() {
   renderShell();
   if (!shellReady) {
     window.addEventListener('hashchange', route);
+    restTimer.subscribe(refreshTimerPill);
     shellReady = true;
   }
   if (!location.hash || !ROUTES[parseHash().base]) {

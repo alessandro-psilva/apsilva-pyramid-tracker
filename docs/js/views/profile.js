@@ -13,19 +13,19 @@ import { h, toast, withBusy, card, fieldNumber, fieldSelect } from '../ui.js';
 
 const HELP = {
   weightKg:
-    'Seu peso corporal atual, em kg. Use a média das pesagens da última semana (de manhã, em jejum, sem roupa). É a base de todos os cálculos.',
+    'Seu peso atual, em kg. Use a média das pesagens da última semana (de manhã, em jejum). Tudo parte daqui.',
   heightM:
-    'Sua altura em metros (ex.: 1,75). Fica como referência — não entra diretamente na meta de calorias.',
+    'Sua altura em metros (ex.: 1,75). Serve de referência; não entra no cálculo das calorias.',
   level:
-    'Há quanto tempo você treina sério e ainda progride. Iniciante: consegue aumentar carga quase toda semana. Intermediário: progride mês a mês. Avançado: progresso só aparece ao longo de vários meses. Define a velocidade de ganho esperada por mês.',
+    'Há quanto tempo você treina e ainda progride. Iniciante: sobe carga quase toda semana. Intermediário: progride a cada mês. Avançado: o progresso leva meses para aparecer. Isso define a velocidade de ganho esperada.',
   activity:
-    'Sua atividade no dia a dia somada aos treinos (já conta 3–6 treinos/semana). Sedentário: trabalho parado, anda pouco. Levemente ativo: anda um pouco. Ativo: em pé/andando boa parte do dia. Muito ativo: trabalho braçal ou muito movimento. Na dúvida use "Ativo" e ajuste em 2–3 semanas se ganhar/perder rápido demais.',
+    'Seu movimento no dia a dia mais os treinos (já conta 3–6 treinos por semana). Sedentário: trabalha sentado, anda pouco. Levemente ativo: anda um tanto. Ativo: fica de pé ou andando boa parte do dia. Muito ativo: trabalho braçal. Na dúvida, comece em "Ativo" e ajuste em 2–3 semanas.',
   phase:
-    'Ganho = comer acima da manutenção para ganhar músculo (vem um pouco de gordura junto). Corte = comer abaixo da manutenção para perder gordura. Faça uma coisa de cada vez. Regra do livro: passe ~4× mais tempo em Ganho do que em Corte.',
+    'Ganho: comer acima da manutenção para ganhar músculo (vem gordura junto). Corte: comer abaixo para perder gordura. Faça uma coisa de cada vez — o livro pede ~4× mais tempo em Ganho do que em Corte.',
   proteinGPerLb:
-    'Gramas de proteína por libra de peso corporal (1 lb = 0,45 kg; o app converte). Padrões: 0,8 no Ganho, 1,1 no Corte. Come pouco por saciar rápido? Baixe. Muita fome ou perdendo força no corte? Suba até 1,2.',
+    'Gramas de proteína por libra de peso (1 lb = 0,45 kg; o app converte). Padrões: 0,8 no Ganho, 1,1 no Corte. Sacia rápido e come pouco? Baixe. Com fome ou perdendo força no corte? Suba até 1,2.',
   fatPercent:
-    'Quanto das calorias do dia vem de gordura — digite o número inteiro (25 = 25%). O carboidrato é o que sobra. Padrões: 25% no Ganho, 20% no Corte. Não desça abaixo de ~0,25 g por libra de peso (o app avisa na prévia).',
+    'Quanto das calorias do dia vem de gordura — número inteiro (25 = 25%). O resto vira carboidrato. Padrões: 25% no Ganho, 20% no Corte. Não passe abaixo de ~0,25 g por libra de peso; a prévia avisa.',
 };
 
 export async function render(ctx) {

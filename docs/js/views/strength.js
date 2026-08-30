@@ -2,6 +2,50 @@
 import { addStrengthLog, listStrengthLogs, deleteStrengthLog } from '../store.js';
 import { todayISO, fmt } from '../calc.js';
 import { h, toast, withBusy, card, emptyState, fieldNumber } from '../ui.js';
+import * as timer from '../rest-timer.js';
+
+const PRESETS = [60, 90, 120, 180];
+let activeUnsub = null;
+
+// Chamado pelo roteador ao sair da tela: solta a inscrição do cronômetro.
+export function teardown() {
+  if (activeUnsub) {
+    activeUnsub();
+    activeUnsub = null;
+  }
+}
+
+function restTimerCard() {
+  teardown(); // solta a inscrição do render anterior
+  const clock = h('div', { class: 'timer__clock', text: '0:00' });
+  const startBtn = h('button', { class: 'btn timer__toggle', onclick: () => timer.toggle() }, 'Iniciar');
+  const box = h('div', { class: 'timer' }, [
+    clock,
+    h('div', { class: 'timer__presets' },
+      PRESETS.map((s) =>
+        h('button', {
+          class: 'timer__preset',
+          onclick: () => timer.startPreset(s),
+        }, timer.fmtClock(s)),
+      ),
+    ),
+    h('div', { class: 'timer__row' }, [
+      startBtn,
+      h('button', { class: 'btn btn--ghost', onclick: () => timer.bump(15) }, '+15s'),
+      h('button', { class: 'btn btn--ghost', onclick: () => timer.reset() }, 'Zerar'),
+    ]),
+  ]);
+
+  activeUnsub = timer.subscribe(({ remaining, running, finished }) => {
+    clock.textContent = timer.fmtClock(remaining);
+    clock.classList.toggle('timer__clock--done', finished);
+    startBtn.textContent = running ? 'Pausar' : 'Iniciar';
+  });
+  // O cronômetro vive no módulo rest-timer.js: segue contando mesmo se você
+  // trocar de tela. A próxima abertura de Força só reconecta o mostrador.
+
+  return card('Descanso entre séries', box);
+}
 
 export async function render(ctx) {
   const exercise = h('input', {
@@ -13,11 +57,11 @@ export async function render(ctx) {
   });
   const fWeight = fieldNumber('sWeight', 'Carga (kg)', '', {
     step: '0.5', required: true,
-    help: 'Peso total na barra ou no halter da sua melhor série de trabalho desse exercício hoje. Comparar a mesma série entre semanas mostra a progressão.',
+    help: 'Peso na barra ou no halter da sua melhor série de trabalho hoje. Comparar a mesma série semana a semana mostra a progressão.',
   });
   const fReps = fieldNumber('sReps', 'Reps', '', {
     integer: true, required: true, min: '1',
-    help: 'Quantas repetições completas você fez nessa série (com boa forma). Subir carga OU subir reps na mesma carga já conta como progresso.',
+    help: 'Repetições completas nessa série, com boa forma. Subir a carga ou subir as reps na mesma carga já é progresso.',
   });
   const date = h('input', { type: 'date', value: todayISO(), required: true });
   const notes = h('input', { type: 'text', placeholder: 'observações (opcional)', autocomplete: 'off' });
@@ -123,7 +167,7 @@ export async function render(ctx) {
         exercise,
         h('span', {
           class: 'field__hint',
-          text: 'Use sempre o mesmo nome pro mesmo exercício (ex.: "Supino reto") — é assim que o histórico agrupa e mostra a seta de progressão.',
+          text: 'Use sempre o mesmo nome (ex.: "Supino reto"). O histórico agrupa por nome e mostra a seta de progressão.',
         }),
       ]),
       h('div', { class: 'grid-2' }, [fWeight.node, fReps.node]),
@@ -143,6 +187,10 @@ export async function render(ctx) {
   refresh();
 
   const frag = document.createDocumentFragment();
-  frag.append(card('Nova série', form), card('Histórico por exercício', historyBox));
+  frag.append(
+    restTimerCard(),
+    card('Nova série', form),
+    card('Histórico por exercício', historyBox),
+  );
   return frag;
 }

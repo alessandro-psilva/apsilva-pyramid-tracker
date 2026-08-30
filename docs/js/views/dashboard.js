@@ -1,12 +1,14 @@
 // views/dashboard.js — primeira tela após login.
-import { listWeighIns, listMeasurements } from '../store.js';
+import { listWeighIns, listMeasurements, getFoodLog } from '../store.js';
 import {
   weeklyStatus,
   weeklyAverages,
   computeSupplements,
+  sumFood,
+  todayISO,
   fmt,
 } from '../calc.js';
-import { h, card, emptyState } from '../ui.js';
+import { h, card, emptyState, progressBar } from '../ui.js';
 import { weightChart, macroChart, waistChart } from '../charts.js';
 
 function stat(label, value, tone) {
@@ -53,9 +55,10 @@ export async function render(ctx) {
     );
   }
 
-  const [weighIns, measurements] = await Promise.all([
+  const [weighIns, measurements, foodLog] = await Promise.all([
     listWeighIns(),
     listMeasurements(),
+    getFoodLog(todayISO()),
   ]);
 
   const weeks = weeklyAverages(weighIns);
@@ -86,6 +89,27 @@ export async function render(ctx) {
       guideLink(ctx, 'nivel-1', 'Entenda estes números'),
     ),
   );
+
+  // --- Comida de hoje ---
+  {
+    const s = sumFood(foodLog.items);
+    const foodCard = h('div');
+    if (foodLog.items.length) {
+      foodCard.append(
+        progressBar('Calorias', s.kcal, targets.targetKcal, 'kcal', { warnOver: true }),
+        progressBar('Proteína', s.protein, targets.protein.g, 'g'),
+      );
+    } else {
+      foodCard.append(h('p', { class: 'muted', text: 'Nada registrado hoje.' }));
+    }
+    foodCard.append(
+      h('button', {
+        class: 'btn btn--ghost btn--block',
+        onclick: () => ctx.navigate('/comida'),
+      }, foodLog.items.length ? 'Registrar mais' : 'Registrar comida'),
+    );
+    frag.append(card('Comida de hoje', foodCard));
+  }
 
   // --- Status da semana ---
   const statusCard = h('div');
@@ -151,6 +175,7 @@ export async function render(ctx) {
     card(
       null,
       h('div', { class: 'segmented' }, [
+        h('button', { class: 'segmented__btn', onclick: () => ctx.navigate('/graficos') }, '📈 Gráficos'),
         h('button', { class: 'segmented__btn', onclick: () => ctx.navigate('/medidas') }, '📏 Medidas'),
         h('button', { class: 'segmented__btn', onclick: () => ctx.navigate('/suplementos') }, '💊 Suplementos'),
       ]),
