@@ -77,7 +77,7 @@ export async function render(ctx) {
 
     historyBox.innerHTML = '';
     if (!logs.length) {
-      historyBox.append(emptyState('Sem registros de força ainda. Adicione o primeiro acima.', '🏋️'));
+      historyBox.append(emptyState('Sem registros de força ainda. Adicione o primeiro acima.'));
       return;
     }
 
@@ -92,22 +92,23 @@ export async function render(ctx) {
       const asc = [...entries].sort((a, b) => (a.date < b.date ? -1 : 1));
       const rows = asc.map((e, i) => {
         const prev = asc[i - 1];
-        let arrow = '';
+        let trend = '';
         if (prev) {
-          if (e.weightKg > prev.weightKg) arrow = '▲';
-          else if (e.weightKg < prev.weightKg) arrow = '▽';
-          else arrow = '＝';
+          if (e.weightKg > prev.weightKg) trend = 'up';
+          else if (e.weightKg < prev.weightKg) trend = 'down';
+          else trend = 'flat';
         }
+        const trendText = { up: 'subiu', down: 'caiu', flat: 'igual' }[trend];
         return h('li', { class: 'list__row' }, [
           h('span', { class: 'muted', text: e.date }),
           h('span', [
             h('strong', { text: `${fmt.kg(e.weightKg)} × ${e.reps}` }),
-            arrow && h('span', { class: `trend trend--${arrow === '▲' ? 'up' : arrow === '▽' ? 'down' : 'flat'}`, text: ` ${arrow}` }),
+            trend && h('span', { class: `trend trend--${trend}`, text: ` ${trendText}` }),
           ]),
           h('button', {
             class: 'link-del',
             title: 'Excluir',
-            text: '✕',
+            text: '×',
             onclick: async () => {
               if (!confirm('Excluir este registro?')) return;
               await deleteStrengthLog(e.id);
@@ -152,7 +153,7 @@ export async function render(ctx) {
             reps: fReps.input.value,
             notes: notes.value,
           });
-          toast('Série registrada ✔', 'ok');
+          toast('Série registrada', 'ok');
           fWeight.input.value = '';
           fReps.input.value = '';
           notes.value = '';

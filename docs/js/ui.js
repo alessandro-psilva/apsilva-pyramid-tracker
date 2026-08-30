@@ -36,11 +36,9 @@ export function toast(message, type = 'ok') {
   toastTimer = setTimeout(() => box.classList.remove('is-visible'), 2600);
 }
 
-export function emptyState(message, icon = '📭') {
-  return h('div', { class: 'empty' }, [
-    h('div', { class: 'empty__icon', text: icon }),
-    h('p', { text: message }),
-  ]);
+// O 2º argumento (antes um ícone) é ignorado — mantido pela compatibilidade das chamadas.
+export function emptyState(message) {
+  return h('div', { class: 'empty' }, [h('p', { text: message })]);
 }
 
 export function card(title, ...content) {

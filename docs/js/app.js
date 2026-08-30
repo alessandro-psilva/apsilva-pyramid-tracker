@@ -22,15 +22,15 @@ import * as food from './views/food.js';
 import * as restTimer from './rest-timer.js';
 
 const ROUTES = {
-  '/dashboard': { view: dashboard, label: 'Resumo', icon: '🏠', title: 'Resumo' },
-  '/comida': { view: food, label: 'Comida', icon: '🍽️', title: 'Comida de hoje' },
-  '/peso': { view: weighIn, label: 'Peso', icon: '⚖️', title: 'Peso de hoje' },
-  '/forca': { view: strength, label: 'Força', icon: '🏋️', title: 'Força' },
-  '/medidas': { view: measurements, label: 'Medidas', icon: '📏', title: 'Medidas corporais' },
-  '/suplementos': { view: supplements, label: 'Suplementos', icon: '💊', title: 'Suplementação' },
-  '/graficos': { view: chartsView, label: 'Gráficos', icon: '📈', title: 'Gráficos' },
-  '/guia': { view: guide, label: 'Guia', icon: '📖', title: 'Guia', hasParam: true },
-  '/perfil': { view: profileView, label: 'Perfil', icon: '⚙️', title: 'Perfil' },
+  '/dashboard': { view: dashboard, label: 'Resumo', title: 'Resumo' },
+  '/comida': { view: food, label: 'Comida', title: 'Comida de hoje' },
+  '/peso': { view: weighIn, label: 'Peso', title: 'Peso de hoje' },
+  '/forca': { view: strength, label: 'Força', title: 'Força' },
+  '/medidas': { view: measurements, label: 'Medidas', title: 'Medidas corporais' },
+  '/suplementos': { view: supplements, label: 'Suplementos', title: 'Suplementação' },
+  '/graficos': { view: chartsView, label: 'Gráficos', title: 'Gráficos' },
+  '/guia': { view: guide, label: 'Guia', title: 'Guia', hasParam: true },
+  '/perfil': { view: profileView, label: 'Perfil', title: 'Perfil' },
 };
 
 const NAV = ['/dashboard', '/comida', '/forca', '/guia', '/perfil'];
@@ -105,10 +105,7 @@ function renderShell() {
       h(
         'a',
         { href: `#${path}`, class: 'tabbar__item', 'data-path': path },
-        [
-          h('span', { class: 'tabbar__icon', text: ROUTES[path].icon }),
-          h('span', { class: 'tabbar__label', text: ROUTES[path].label }),
-        ],
+        [h('span', { class: 'tabbar__label', text: ROUTES[path].label })],
       ),
     ),
   );
@@ -116,13 +113,16 @@ function renderShell() {
   const fab = h(
     'button',
     { class: 'fab', id: 'fab', 'aria-label': 'Registrar peso de hoje', onclick: () => ctx.navigate('/peso') },
-    [h('span', { class: 'fab__plus', text: '＋' }), h('span', { text: 'Peso' })],
+    'Registrar peso',
   );
 
   const pill = h(
     'button',
     { class: 'timer-pill', id: 'timer-pill', hidden: true, onclick: () => ctx.navigate('/forca') },
-    [h('span', { text: '⏱' }), h('span', { class: 'timer-pill__t', id: 'timer-pill-t', text: '0:00' })],
+    [
+      h('span', { class: 'timer-pill__label', text: 'Descanso' }),
+      h('span', { class: 'timer-pill__t', id: 'timer-pill-t', text: '0:00' }),
+    ],
   );
 
   document.body.append(header, main, fab, pill, nav);
@@ -149,7 +149,7 @@ function setChrome(base, param) {
   const isSub = base === '/guia' && param;
   const onTab = NAV.includes(base) && !isSub;
 
-  titleEl.textContent = base === '/dashboard' ? `${greeting()} 🌴` : r.title;
+  titleEl.textContent = base === '/dashboard' ? greeting() : r.title;
   backEl.hidden = onTab;
 
   $('#fab').hidden = FAB_HIDDEN.has(base) || isSub;

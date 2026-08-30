@@ -1,4 +1,4 @@
-# apsilva-pyramid-tracker 🌴
+# apsilva-pyramid-tracker
 
 Site pessoal de acompanhamento de **dieta e treino**, seguindo o método do livro
 *The Muscle & Strength Pyramid: Nutrition* (Eric Helms, v2.0).

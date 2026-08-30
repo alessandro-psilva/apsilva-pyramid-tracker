@@ -16,7 +16,6 @@ export const CHAPTERS = [
   // -----------------------------------------------------------------------
   {
     id: 'mentalidade',
-    icon: '🧠',
     title: 'Mentalidade e materiais',
     tagline: 'Como pensar sobre dieta antes de contar qualquer caloria.',
     sections: [
@@ -64,7 +63,6 @@ export const CHAPTERS = [
   // -----------------------------------------------------------------------
   {
     id: 'nivel-1',
-    icon: '🔥',
     title: 'Nível 1 — Balanço energético',
     tagline: 'Calorias de manutenção, ganhar ou cortar, e a que ritmo.',
     sections: [
@@ -117,7 +115,6 @@ export const CHAPTERS = [
   // -----------------------------------------------------------------------
   {
     id: 'nivel-2',
-    icon: '🍽️',
     title: 'Nível 2 — Macronutrientes e fibra',
     tagline: 'De onde vêm as calorias: proteína, depois gordura, depois carbo.',
     sections: [
@@ -165,13 +162,12 @@ export const CHAPTERS = [
         ],
       },
     ],
-    appTie: 'No Perfil você define proteína (g/lb) e gordura (%); o app deriva os gramas e avisa se algum macro fura o piso mínimo. Na aba Comida você monta as refeições (com alimentos salvos) e vê o quanto falta de cada macro.',
+    appTie: 'No Perfil você define proteína (g/lb), gordura (%) e refeições por dia; o app deriva os gramas e avisa se algum macro fura o piso mínimo. Na aba Comida você monta as refeições com alimentos salvos, vê o quanto falta de cada macro no dia e uma margem de P/C/G por refeição.',
   },
 
   // -----------------------------------------------------------------------
   {
     id: 'nivel-3',
-    icon: '🥦',
     title: 'Nível 3 — Micronutrientes e água',
     tagline: 'Vitaminas, minerais, frutas/vegetais e hidratação.',
     sections: [
@@ -210,7 +206,6 @@ export const CHAPTERS = [
   // -----------------------------------------------------------------------
   {
     id: 'nivel-4',
-    icon: '⏱️',
     title: 'Nível 4 — Tempo e frequência',
     tagline: 'Diet breaks, refeeds, número de refeições, nutrição peri-treino.',
     sections: [
@@ -253,7 +248,6 @@ export const CHAPTERS = [
   // -----------------------------------------------------------------------
   {
     id: 'nivel-5',
-    icon: '💊',
     title: 'Nível 5 — Suplementação',
     tagline: 'O nível menos importante. A maioria só esvazia a carteira.',
     sections: [
@@ -272,7 +266,7 @@ export const CHAPTERS = [
           '**Ômega-3 (EPA+DHA):** 1–2 g/dia combinados (pode exigir 3–6 g de óleo de peixe). Não megadose. Benefícios de saúde (pressão, humor, cardio); efeito em hipertrofia é fraco/misto.',
           '**Vitamina D3:** 20–80 UI/kg/dia — **só** se um exame mostrar 25(OH)D abaixo de 75 nmol/L (30 ng/mL). Corrigida a deficiência, mais não é melhor.',
           '**Creatina monoidratada:** 0,04 g/kg/dia (~3–5 g), qualquer horário, todo dia. Timing e "saturação" só afetam as 2 primeiras semanas. Saturar ajuda se você começa durante o corte (menos ruído na balança).',
-          '**Cafeína:** 1–3 mg/kg/dia para suprimir cansaço (efeito resiste à tolerância); 4–6 mg/kg ~60 min pré-treino para desempenho. Mantenha o consumo habitual baixo (~1 mg/kg, ~2×/semana) para a dose pré-treino ainda funcionar. Reduza no fim do dia.',
+          '**Cafeína:** dois usos, que NÃO se somam. Para o cansaço: 1–3 mg/kg/dia distribuídos (resiste à tolerância). Para desempenho: 4–6 mg/kg em dose única ~60 min antes do treino — comece pela metade e mantenha o resto do dia perto de 1 mg/kg, no máx. ~2×/semana, senão a tolerância anula o efeito. Teto geral de segurança: ~400 mg/dia. Reduza no fim do dia.',
         ],
       },
       {
@@ -295,7 +289,6 @@ export const CHAPTERS = [
   // -----------------------------------------------------------------------
   {
     id: 'ajustes',
-    icon: '📷',
     title: 'Fazendo ajustes e medindo progresso',
     tagline: 'Balança, fotos, desempenho e fita métrica — e quando mexer na dieta.',
     sections: [
@@ -344,7 +337,6 @@ export const CHAPTERS = [
   // -----------------------------------------------------------------------
   {
     id: 'periodizacao',
-    icon: '🗓️',
     title: 'Recuperação e periodização de longo prazo',
     tagline: 'O que fazer quando uma fase termina, e como encadear os anos.',
     sections: [
@@ -381,7 +373,6 @@ export const CHAPTERS = [
   // -----------------------------------------------------------------------
   {
     id: 'comportamento',
-    icon: '🧭',
     title: 'Comportamento e estilo de vida',
     tagline: 'Como seguir o plano de verdade, pelo resto da vida.',
     sections: [
@@ -428,7 +419,6 @@ export const CHAPTERS = [
   // -----------------------------------------------------------------------
   {
     id: 'pico',
-    icon: '🏆',
     title: 'Pico para competição',
     tagline: 'Capítulo avançado — só se você for competir.',
     sections: [

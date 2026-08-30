@@ -34,6 +34,7 @@ export const DEFAULT_PROFILE = {
   phase: 'Ganho',
   proteinGPerLb: PHASE_DEFAULTS['Ganho'].proteinGPerLb,
   fatPercent: PHASE_DEFAULTS['Ganho'].fatPercent,
+  mealsPerDay: 4,
 };
 
 export async function getProfile() {
@@ -51,6 +52,7 @@ export async function saveProfile(profile) {
     phase: profile.phase,
     proteinGPerLb: Number(profile.proteinGPerLb),
     fatPercent: Number(profile.fatPercent),
+    mealsPerDay: Math.min(8, Math.max(2, Math.round(Number(profile.mealsPerDay) || 4))),
     updatedAt: serverTimestamp(),
   };
   await setDoc(doc(db, 'users', uid(), 'meta', 'profile'), clean, { merge: true });
