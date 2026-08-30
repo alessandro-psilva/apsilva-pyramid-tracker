@@ -11,19 +11,45 @@ import {
 } from '../calc.js';
 import { h, toast, withBusy, card, fieldNumber, fieldSelect } from '../ui.js';
 
+const HELP = {
+  weightKg:
+    'Seu peso corporal atual, em kg. Use a média das pesagens da última semana (de manhã, em jejum, sem roupa). É a base de todos os cálculos.',
+  heightM:
+    'Sua altura em metros (ex.: 1,75). Fica como referência — não entra diretamente na meta de calorias.',
+  level:
+    'Há quanto tempo você treina sério e ainda progride. Iniciante: consegue aumentar carga quase toda semana. Intermediário: progride mês a mês. Avançado: progresso só aparece ao longo de vários meses. Define a velocidade de ganho esperada por mês.',
+  activity:
+    'Sua atividade no dia a dia somada aos treinos (já conta 3–6 treinos/semana). Sedentário: trabalho parado, anda pouco. Levemente ativo: anda um pouco. Ativo: em pé/andando boa parte do dia. Muito ativo: trabalho braçal ou muito movimento. Na dúvida use "Ativo" e ajuste em 2–3 semanas se ganhar/perder rápido demais.',
+  phase:
+    'Ganho = comer acima da manutenção para ganhar músculo (vem um pouco de gordura junto). Corte = comer abaixo da manutenção para perder gordura. Faça uma coisa de cada vez. Regra do livro: passe ~4× mais tempo em Ganho do que em Corte.',
+  proteinGPerLb:
+    'Gramas de proteína por libra de peso corporal (1 lb = 0,45 kg; o app converte). Padrões: 0,8 no Ganho, 1,1 no Corte. Come pouco por saciar rápido? Baixe. Muita fome ou perdendo força no corte? Suba até 1,2.',
+  fatPercent:
+    'Quanto das calorias do dia vem de gordura — digite o número inteiro (25 = 25%). O carboidrato é o que sobra. Padrões: 25% no Ganho, 20% no Corte. Não desça abaixo de ~0,25 g por libra de peso (o app avisa na prévia).',
+};
+
 export async function render(ctx) {
   const p = { ...ctx.profile };
 
-  const fW = fieldNumber('weightKg', 'Peso base (kg)', p.weightKg, { step: '0.1', required: true });
-  const fH = fieldNumber('heightM', 'Altura (m)', p.heightM, { step: '0.01', required: true });
-  const fLevel = fieldSelect('level', 'Nível de treino', p.level, EXPERIENCE_LEVELS);
-  const fAct = fieldSelect('activity', 'Nível de atividade', p.activity, ACTIVITY_LEVELS);
-  const fPhase = fieldSelect('phase', 'Fase', p.phase, PHASES);
-  const fProt = fieldNumber('proteinGPerLb', 'Proteína (g/lb)', p.proteinGPerLb, { step: '0.05' });
-  const fFat = fieldNumber('fatPercent', 'Gordura (% das calorias)', Math.round(p.fatPercent * 100), {
-    step: '1',
-    integer: true,
+  const fW = fieldNumber('weightKg', 'Peso base (kg)', p.weightKg, {
+    step: '0.1', required: true, help: HELP.weightKg,
   });
+  const fH = fieldNumber('heightM', 'Altura (m)', p.heightM, {
+    step: '0.01', required: true, help: HELP.heightM,
+  });
+  const fLevel = fieldSelect('level', 'Nível de treino', p.level, EXPERIENCE_LEVELS, { help: HELP.level });
+  const fAct = fieldSelect('activity', 'Nível de atividade', p.activity, ACTIVITY_LEVELS, { help: HELP.activity });
+  const fPhase = fieldSelect('phase', 'Fase', p.phase, PHASES, { help: HELP.phase });
+  const fProt = fieldNumber('proteinGPerLb', 'Proteína (g/lb)', p.proteinGPerLb, {
+    step: '0.05', help: HELP.proteinGPerLb,
+  });
+  const fFat = fieldNumber('fatPercent', 'Gordura (% das calorias)', Math.round(p.fatPercent * 100), {
+    step: '1', integer: true, help: HELP.fatPercent,
+  });
+
+  // Dica dinâmica da faixa recomendada de proteína (atualiza ao trocar de fase).
+  const protRange = h('span', { class: 'field__hint' });
+  fProt.node.insertBefore(protRange, fProt.node.querySelector('.field__help'));
 
   const preview = h('div', { class: 'preview' });
 
@@ -39,16 +65,20 @@ export async function render(ctx) {
     };
   }
 
+  function row(label, value, strong = false) {
+    return h('div', { class: 'preview__row' }, [
+      h('span', { text: label }),
+      strong ? h('strong', { text: value }) : h('span', { text: value }),
+    ]);
+  }
+
   function updatePreview() {
     const draft = readForm();
-    const range = MACRO_RANGES[draft.phase];
-    fProt.node.querySelector('.field__hint')?.remove();
-    fProt.node.append(
-      h('span', {
-        class: 'field__hint',
-        text: `Faixa ${draft.phase}: ${fmt.range(range.proteinGPerLb[0], range.proteinGPerLb[1])} g/lb`,
-      }),
-    );
+    const range = MACRO_RANGES[draft.phase] || MACRO_RANGES.Ganho;
+    protRange.textContent = `Faixa ${draft.phase}: ${fmt.range(
+      range.proteinGPerLb[0], range.proteinGPerLb[1],
+    )} g/lb · gordura ${Math.round(range.fatPercent[0] * 100)}–${Math.round(range.fatPercent[1] * 100)}%`;
+
     try {
       const t = computeTargets(draft);
       preview.innerHTML = '';
@@ -69,18 +99,12 @@ export async function render(ctx) {
     }
   }
 
-  function row(label, value, strong = false) {
-    return h('div', { class: 'preview__row' }, [
-      h('span', { text: label }),
-      strong ? h('strong', { text: value }) : h('span', { text: value }),
-    ]);
-  }
-
-  // Ao trocar de fase, sugere os defaults de macro daquela fase.
   fPhase.input.addEventListener('change', () => {
     const d = PHASE_DEFAULTS[fPhase.input.value];
-    fProt.input.value = d.proteinGPerLb;
-    fFat.input.value = Math.round(d.fatPercent * 100);
+    if (d) {
+      fProt.input.value = d.proteinGPerLb;
+      fFat.input.value = Math.round(d.fatPercent * 100);
+    }
     updatePreview();
   });
   for (const f of [fW, fH, fLevel, fAct, fProt, fFat]) {
@@ -99,7 +123,7 @@ export async function render(ctx) {
           toast('Peso e altura são obrigatórios.', 'warn');
           return;
         }
-        await withBusy(ev.submitter, async () => {
+        await withBusy(ev.submitter || ev.target.querySelector('[type=submit]'), async () => {
           await saveProfile(draft);
           await ctx.reloadProfile();
           toast('Perfil salvo ✔', 'ok');
@@ -121,7 +145,7 @@ export async function render(ctx) {
 
   const frag = document.createDocumentFragment();
   frag.append(
-    card('Perfil', form),
+    card('Perfil', h('p', { class: 'muted', text: 'Toque no "?" ao lado de cada campo para entender o que preencher.' }), form),
     card('Prévia das metas', preview),
     card(null, logout),
   );

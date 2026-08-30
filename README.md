@@ -20,8 +20,14 @@ Tudo roda no plano gratuito, **sem cartão de crédito**:
 
 **Não ative o plano Blaze.** O plano Spark é suficiente e nunca gera cobrança.
 Nada aqui usa Cloud Functions, Storage pago ou hosting do Firebase.
-- **Mobile-first / PWA:** dá para "Adicionar à tela inicial". A tela de registrar
-  o peso do dia abre já com o campo focado e salva em poucos toques.
+
+**Mobile-first / PWA:** dá para "Adicionar à tela inicial". A tela de registrar o
+peso do dia abre com o campo já focado e salva em poucos toques. Barra superior
+com título e botão voltar, barra inferior de abas, botão flutuante de peso e
+transições suaves entre telas.
+
+**Ajuda embutida:** cada campo do Perfil e das Medidas tem um "?" que explica o
+que é e como preencher; telas ligam direto para o capítulo relevante do Guia.
 
 ---
 
@@ -30,12 +36,13 @@ Nada aqui usa Cloud Functions, Storage pago ou hosting do Firebase.
 | Rota | Tela |
 |---|---|
 | `#/dashboard` | Resumo: peso, fase, metas do dia, água/fibra, suplementos, status semanal, 3 gráficos |
+| `#/guia` | Guia de consulta com um capítulo por nível da Pirâmide + ajustes, periodização e comportamento (resumo do livro em português) |
 | `#/peso` | Registrar peso de hoje (acesso rápido pelo botão flutuante) |
 | `#/forca` | Registro de força + histórico por exercício com indicação de progressão |
-| `#/medidas` | 9 pontos de medida corporal + histórico em tabela |
+| `#/medidas` | 9 pontos de medida corporal (com instruções de como medir) + histórico |
 | `#/graficos` | Versão ampliada dos gráficos, com seletor de 4/8/12 semanas |
 | `#/suplementos` | Doses da Lista A calculadas pelo peso (somente leitura) |
-| `#/perfil` | Editar peso, altura, nível, atividade, fase e macros; prévia das metas ao vivo |
+| `#/perfil` | Editar peso, altura, nível, atividade, fase e macros; prévia das metas ao vivo; "?" em cada campo |
 
 ---
 
@@ -47,6 +54,8 @@ users/{uid}/dailyWeighIns/{YYYY-MM-DD}    (pesagem diária, id = data)
 users/{uid}/strengthLogs/{autoId}
 users/{uid}/measurements/{autoId}
 ```
+
+O conteúdo do Guia é estático (`docs/js/guide-content.js`) — não usa o Firestore.
 
 > O perfil fica em `meta/profile` (e não em `users/{uid}`) para ser coberto pela
 > regra recursiva `match /users/{uid}/{document=**}`.
@@ -176,9 +185,10 @@ docs/
     calc.js             lógica de negócio (funções puras)
     store.js            CRUD no Firestore
     charts.js           wrappers do Chart.js
-    ui.js               helpers de DOM / toast
-    app.js              bootstrap, gate de auth, roteador por hash
-    views/              uma tela por arquivo
+    ui.js               helpers de DOM / toast / campos com ajuda "?"
+    guide-content.js    texto do Guia (resumo do livro, estático)
+    app.js              bootstrap, gate de auth, roteador por hash, app bar
+    views/              uma tela por arquivo (inclui guide.js)
 firestore.rules
 firebase.json
 test/calc.test.mjs

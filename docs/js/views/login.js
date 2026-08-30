@@ -33,7 +33,7 @@ export async function render() {
       class: 'auth-card',
       onsubmit: async (ev) => {
         ev.preventDefault();
-        const btn = ev.submitter;
+        const btn = ev.submitter || ev.target.querySelector('[type=submit]');
         await withBusy(btn, async () => {
           try {
             await signInWithEmailAndPassword(auth, email.value.trim(), pass.value);

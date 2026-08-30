@@ -17,23 +17,28 @@ import * as strength from './views/strength.js';
 import * as measurements from './views/measurements.js';
 import * as supplements from './views/supplements.js';
 import * as chartsView from './views/charts-view.js';
+import * as guide from './views/guide.js';
 
 const ROUTES = {
-  '/dashboard': { view: dashboard, label: 'Resumo', icon: '🏠' },
-  '/peso': { view: weighIn, label: 'Peso', icon: '⚖️' },
-  '/forca': { view: strength, label: 'Força', icon: '🏋️' },
-  '/medidas': { view: measurements, label: 'Medidas', icon: '📏' },
-  '/suplementos': { view: supplements, label: 'Suplementos', icon: '💊' },
-  '/graficos': { view: chartsView, label: 'Gráficos', icon: '📈' },
-  '/perfil': { view: profileView, label: 'Perfil', icon: '⚙️' },
+  '/dashboard': { view: dashboard, label: 'Resumo', icon: '🏠', title: 'Resumo' },
+  '/peso': { view: weighIn, label: 'Peso', icon: '⚖️', title: 'Peso de hoje' },
+  '/forca': { view: strength, label: 'Força', icon: '🏋️', title: 'Força' },
+  '/medidas': { view: measurements, label: 'Medidas', icon: '📏', title: 'Medidas corporais' },
+  '/suplementos': { view: supplements, label: 'Suplementos', icon: '💊', title: 'Suplementação' },
+  '/graficos': { view: chartsView, label: 'Gráficos', icon: '📈', title: 'Gráficos' },
+  '/guia': { view: guide, label: 'Guia', icon: '📖', title: 'Guia', hasParam: true },
+  '/perfil': { view: profileView, label: 'Perfil', icon: '⚙️', title: 'Perfil' },
 };
 
-const NAV = ['/dashboard', '/peso', '/forca', '/graficos', '/perfil'];
+const NAV = ['/dashboard', '/guia', '/forca', '/graficos', '/perfil'];
+// Telas em que o botão flutuante de peso não faz sentido.
+const FAB_HIDDEN = new Set(['/peso', '/perfil']);
 
 // Contexto compartilhado entre as telas.
 const ctx = {
   profile: null,
   targets: null,
+  routeParam: '',
   async reloadProfile() {
     ctx.profile = await getProfile();
     ctx.targets = safeTargets(ctx.profile);
@@ -55,15 +60,44 @@ function safeTargets(profile) {
   }
 }
 
+// "/guia/nivel-1" -> { base: "/guia", param: "nivel-1" }
+function parseHash() {
+  const raw = location.hash.replace(/^#/, '') || '/dashboard';
+  const [, seg1 = '', seg2 = ''] = raw.split('/');
+  const base = `/${seg1}`;
+  return ROUTES[base] ? { base, param: seg2 } : { base: '/dashboard', param: '' };
+}
+
 const appEl = () => $('#app');
+
+function greeting() {
+  const hr = new Date().getHours();
+  if (hr < 12) return 'Bom dia';
+  if (hr < 18) return 'Boa tarde';
+  return 'Boa noite';
+}
 
 function renderShell() {
   document.body.innerHTML = '';
+
+  const back = h('button', {
+    class: 'appbar__back',
+    id: 'appbar-back',
+    'aria-label': 'Voltar',
+    html: '‹',
+    onclick: () => (history.length > 1 ? history.back() : ctx.navigate('/dashboard')),
+  });
+  const header = h('header', { class: 'appbar', id: 'appbar' }, [
+    back,
+    h('h1', { class: 'appbar__title', id: 'appbar-title', tabindex: '-1', text: 'Resumo' }),
+    h('span', { class: 'appbar__spacer' }),
+  ]);
+
   const main = h('main', { id: 'app', class: 'app' });
 
   const nav = h(
     'nav',
-    { class: 'tabbar' },
+    { class: 'tabbar', 'aria-label': 'Navegação principal' },
     NAV.map((path) =>
       h(
         'a',
@@ -78,45 +112,59 @@ function renderShell() {
 
   const fab = h(
     'button',
-    {
-      class: 'fab',
-      title: 'Registrar peso de hoje',
-      onclick: () => ctx.navigate('/peso'),
-    },
-    '＋ Peso',
+    { class: 'fab', id: 'fab', 'aria-label': 'Registrar peso de hoje', onclick: () => ctx.navigate('/peso') },
+    [h('span', { class: 'fab__plus', text: '＋' }), h('span', { text: 'Peso' })],
   );
 
-  document.body.append(main, fab, nav);
+  document.body.append(header, main, fab, nav);
 }
 
-function setActiveTab(path) {
+function setChrome(base, param) {
+  const r = ROUTES[base];
   for (const a of document.querySelectorAll('.tabbar__item')) {
-    a.classList.toggle('is-active', a.dataset.path === path);
+    a.classList.toggle('is-active', a.dataset.path === base);
   }
+
+  const titleEl = $('#appbar-title');
+  const backEl = $('#appbar-back');
+  const isSub = base === '/guia' && param;
+  const onTab = NAV.includes(base) && !isSub;
+
+  titleEl.textContent = base === '/dashboard' ? `${greeting()} 🌴` : r.title;
+  backEl.hidden = onTab;
+
+  $('#fab').hidden = FAB_HIDDEN.has(base) || isSub;
 }
 
+let routeSeq = 0;
 async function route() {
   if (!auth.currentUser) return;
+  const myTurn = ++routeSeq;
 
-  let path = location.hash.replace(/^#/, '') || '/dashboard';
-  if (!ROUTES[path]) path = '/dashboard';
+  const { base, param } = parseHash();
+  ctx.routeParam = param;
+  const { view } = ROUTES[base];
 
-  const { view } = ROUTES[path];
-  setActiveTab(path);
+  setChrome(base, param);
   destroyAll();
 
   const host = appEl();
   host.innerHTML = '';
-  host.append(h('div', { class: 'loading', text: 'Carregando…' }));
+  host.append(skeleton());
 
   try {
     await ctx.reloadProfile();
     const node = await view.render(ctx);
+    if (myTurn !== routeSeq) return; // navegação mais nova já começou
     host.innerHTML = '';
-    host.append(node);
-    host.scrollTo(0, 0);
+    const wrap = h('div', { class: 'view' });
+    wrap.append(node);
+    host.append(wrap);
     window.scrollTo(0, 0);
+    // Acessibilidade: leva o foco pro título ao trocar de tela.
+    requestAnimationFrame(() => $('#appbar-title')?.focus({ preventScroll: true }));
   } catch (e) {
+    if (myTurn !== routeSeq) return;
     console.error(e);
     host.innerHTML = '';
     host.append(
@@ -129,6 +177,14 @@ async function route() {
   }
 }
 
+function skeleton() {
+  return h('div', { class: 'skeleton' }, [
+    h('div', { class: 'skeleton__card' }),
+    h('div', { class: 'skeleton__card skeleton__card--sm' }),
+    h('div', { class: 'skeleton__card' }),
+  ]);
+}
+
 let shellReady = false;
 function startApp() {
   renderShell();
@@ -136,14 +192,12 @@ function startApp() {
     window.addEventListener('hashchange', route);
     shellReady = true;
   }
-  if (!location.hash || !ROUTES[location.hash.replace(/^#/, '')]) {
-    // Ajusta a hash sem disparar hashchange duas vezes; o route() abaixo cuida do render.
+  if (!location.hash || !ROUTES[parseHash().base]) {
     history.replaceState(null, '', '#/dashboard');
   }
   route();
 }
 
-// Exposto para a tela de perfil / logout.
 ctx.signOut = () => signOut(auth);
 
 onAuthStateChanged(auth, (user) => {
@@ -153,13 +207,11 @@ onAuthStateChanged(auth, (user) => {
     destroyAll();
     document.body.innerHTML = '';
     document.body.append(h('main', { class: 'app app--auth', id: 'app' }));
-    login.render(ctx).then((node) => {
-      $('#app').append(node);
-    });
+    login.render(ctx).then((node) => $('#app').append(node));
   }
 });
 
-// Registro do service worker (instalação / "adicionar à tela inicial").
+// Service worker (instalação / "adicionar à tela inicial").
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js').catch(() => {});

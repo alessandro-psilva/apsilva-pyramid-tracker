@@ -11,8 +11,14 @@ export async function render(ctx) {
     required: true,
     autocomplete: 'off',
   });
-  const fWeight = fieldNumber('sWeight', 'Carga (kg)', '', { step: '0.5', required: true });
-  const fReps = fieldNumber('sReps', 'Reps', '', { integer: true, required: true, min: '1' });
+  const fWeight = fieldNumber('sWeight', 'Carga (kg)', '', {
+    step: '0.5', required: true,
+    help: 'Peso total na barra ou no halter da sua melhor série de trabalho desse exercício hoje. Comparar a mesma série entre semanas mostra a progressão.',
+  });
+  const fReps = fieldNumber('sReps', 'Reps', '', {
+    integer: true, required: true, min: '1',
+    help: 'Quantas repetições completas você fez nessa série (com boa forma). Subir carga OU subir reps na mesma carga já conta como progresso.',
+  });
   const date = h('input', { type: 'date', value: todayISO(), required: true });
   const notes = h('input', { type: 'text', placeholder: 'observações (opcional)', autocomplete: 'off' });
 
@@ -94,7 +100,7 @@ export async function render(ctx) {
           toast('Exercício, carga e reps são obrigatórios.', 'warn');
           return;
         }
-        await withBusy(ev.submitter, async () => {
+        await withBusy(ev.submitter || ev.target.querySelector('[type=submit]'), async () => {
           await addStrengthLog({
             date: date.value,
             exercise: exercise.value,
@@ -112,9 +118,13 @@ export async function render(ctx) {
       },
     },
     [
-      h('label', { class: 'field' }, [
+      h('div', { class: 'field' }, [
         h('span', { class: 'field__label', text: 'Exercício' }),
         exercise,
+        h('span', {
+          class: 'field__hint',
+          text: 'Use sempre o mesmo nome pro mesmo exercício (ex.: "Supino reto") — é assim que o histórico agrupa e mostra a seta de progressão.',
+        }),
       ]),
       h('div', { class: 'grid-2' }, [fWeight.node, fReps.node]),
       h('label', { class: 'field' }, [
